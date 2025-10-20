@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
+using DotNetEnv; // Make sure this using statement is present
 
 namespace Hotel.Models;
 
@@ -16,34 +17,37 @@ public partial class HotelDbContext : DbContext
     {
     }
 
-    public virtual DbSet<AvailableRoomsPerType> AvailableRoomsPerTypes { get; set; }
-
-    public virtual DbSet<Discount> Discounts { get; set; }
-
-    public virtual DbSet<DiscountUsage> DiscountUsages { get; set; }
-
-    public virtual DbSet<Guest> Guests { get; set; }
-
-    public virtual DbSet<GuestsWithChildrenInformation> GuestsWithChildrenInformations { get; set; }
-
-    public virtual DbSet<HotelRoom> HotelRooms { get; set; }
-
-    public virtual DbSet<HotelType> HotelTypes { get; set; }
-
-    public virtual DbSet<MonthlyBooking> MonthlyBookings { get; set; }
-
-    public virtual DbSet<PresenceOfChild> PresenceOfChildren { get; set; }
-
-    public virtual DbSet<RegularGuestsInformation> RegularGuestsInformations { get; set; }
-
-    public virtual DbSet<Reservation> Reservations { get; set; }
-
-    public virtual DbSet<Staff> Staff { get; set; }
-
+    // This method is the fix. It configures the database connection.
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Load environment variables from the .env file
+            Env.Load();
+            var host = Environment.GetEnvironmentVariable("DB_HOST");
+            var port = Environment.GetEnvironmentVariable("DB_PORT");
+            var database = Environment.GetEnvironmentVariable("DB_NAME");
+            var user = Environment.GetEnvironmentVariable("DB_USER");
+            var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
+            // Build the connection string and configure the MySQL provider
+            var connectionString = $"Server={host};Port={port};Database={database};User={user};Password={password};";
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
     }
+
+    public virtual DbSet<AvailableRoomsPerType> AvailableRoomsPerTypes { get; set; }
+    public virtual DbSet<Discount> Discounts { get; set; }
+    public virtual DbSet<DiscountUsage> DiscountUsages { get; set; }
+    public virtual DbSet<Guest> Guests { get; set; }
+    public virtual DbSet<GuestsWithChildrenInformation> GuestsWithChildrenInformations { get; set; }
+    public virtual DbSet<HotelRoom> HotelRooms { get; set; }
+    public virtual DbSet<HotelType> HotelTypes { get; set; }
+    public virtual DbSet<MonthlyBooking> MonthlyBookings { get; set; }
+    public virtual DbSet<PresenceOfChild> PresenceOfChildren { get; set; }
+    public virtual DbSet<RegularGuestsInformation> RegularGuestsInformations { get; set; }
+    public virtual DbSet<Reservation> Reservations { get; set; }
+    public virtual DbSet<Staff> Staff { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
