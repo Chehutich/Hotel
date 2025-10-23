@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 public class ListGuestsControl : UserControl
 {
     private DataGridView dgv;
+    private TextBox txtSearch;
+    private ComboBox cmbSort;
 
     public ListGuestsControl()
     {
-        // Створюємо GroupBox та DataGridView, як і раніше
         var guestBox = new GroupBox
         {
             Text = "Список зареєстрованих гостей",
@@ -18,6 +20,43 @@ public class ListGuestsControl : UserControl
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(15)
         };
+
+        var mainLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            RowCount = 2,
+            ColumnCount = 1
+        };
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));
+
+        var filterPanel = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.LeftToRight,
+            WrapContents = false,
+            AutoSize = true
+        };
+
+        txtSearch = new TextBox { Width = 200, Margin = new Padding(3) };
+        cmbSort = new ComboBox { Width = 150, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList };
+        var btnSearch = new Button { Text = "Пошук", Width = 100, Margin = new Padding(3) };
+        var btnReset = new Button { Text = "Скинути", Width = 100, Margin = new Padding(3) };
+
+        // ОНОВЛЕНО: Додано новий пункт сортування
+        cmbSort.Items.AddRange(new string[] {
+            "За прізвищем (А-Я)",
+            "За прізвищем (Я-А)",
+            "За ID (зростання)",
+            "За ID (спадання)" // <-- Новий пункт
+        });
+
+        filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft });
+        filterPanel.Controls.Add(txtSearch);
+        filterPanel.Controls.Add(new Label { Text = "Сортувати:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0) });
+        filterPanel.Controls.Add(cmbSort);
+        filterPanel.Controls.Add(btnSearch);
+        filterPanel.Controls.Add(btnReset);
 
         dgv = new DataGridView
         {
@@ -29,35 +68,61 @@ public class ListGuestsControl : UserControl
             BorderStyle = BorderStyle.None
         };
 
-        guestBox.Controls.Add(dgv);
+        mainLayout.Controls.Add(filterPanel, 0, 0);
+        mainLayout.Controls.Add(dgv, 0, 1);
+
+        guestBox.Controls.Add(mainLayout);
         this.Controls.Add(guestBox);
 
-        // Важливо: підписуємося на подію Load.
-        // Код у методі ListGuestsControl_Load виконається, коли цей екран буде показаний.
         this.Load += ListGuestsControl_Load;
+        btnSearch.Click += BtnSearch_Click;
+        btnReset.Click += BtnReset_Click;
     }
 
-    // async void дозволяє методу виконувати операції (наприклад, запит до БД)
-    // у фоновому режимі, не "заморожуючи" інтерфейс користувача.
-    private async void ListGuestsControl_Load(object? sender, EventArgs e)
+    private void ListGuestsControl_Load(object? sender, EventArgs e)
+    {
+        LoadGuests();
+    }
+
+    private async void LoadGuests(string? searchTerm = null, string? sortBy = null)
     {
         try
         {
-            // 1. Створюємо екземпляр нашого DbContext.
-            // Конструкція 'using' гарантує, що з'єднання з БД буде автоматично закрито.
             using (var context = new HotelDbContext())
             {
-                // 2. Робимо запит до бази даних.
-                // await наказує програмі зачекати, поки дані прийдуть з БД.
-                // context.Guests представляє вашу таблицю 'guests'.
-                // ToListAsync() отримує всі записи з таблиці.
-                var guests = await context.Guests.ToListAsync();
+                var query = context.Guests.AsQueryable();
 
-                // 3. Встановлюємо отриманий список гостей як джерело даних для нашої таблиці.
-                // DataGridView автоматично створить стовпці для кожної публічної властивості об'єкта Guest.
-                dgv.DataSource = guests;
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    query = query.Where(g =>
+                        g.GuestFirstName.Contains(searchTerm) ||
+                        g.GuestLastName.Contains(searchTerm) ||
+                        g.PhoneNumber.Contains(searchTerm)
+                    );
+                }
 
-                // 4. Налаштовуємо вигляд стовпців для кращої читабельності.
+                // ОНОВЛЕНО: Додано обробку нового випадку сортування
+                switch (sortBy)
+                {
+                    case "За прізвищем (А-Я)":
+                        query = query.OrderBy(g => g.GuestLastName);
+                        break;
+                    case "За прізвищем (Я-А)":
+                        query = query.OrderByDescending(g => g.GuestLastName);
+                        break;
+                    case "За ID (зростання)":
+                        query = query.OrderBy(g => g.IdGuest);
+                        break;
+                    case "За ID (спадання)": 
+                        query = query.OrderByDescending(g => g.IdGuest);
+                        break;
+                    default:
+                        query = query.OrderBy(g => g.IdGuest);
+                        break;
+                }
+
+                dgv.DataSource = await query.ToListAsync();
+
                 if (dgv.Columns["IdGuest"] != null) dgv.Columns["IdGuest"].HeaderText = "ID";
                 if (dgv.Columns["GuestFirstName"] != null) dgv.Columns["GuestFirstName"].HeaderText = "Ім'я";
                 if (dgv.Columns["GuestLastName"] != null) dgv.Columns["GuestLastName"].HeaderText = "Прізвище";
@@ -66,15 +131,25 @@ public class ListGuestsControl : UserControl
                 if (dgv.Columns["PassportSeries"] != null) dgv.Columns["PassportSeries"].HeaderText = "Паспорт";
                 if (dgv.Columns["IsRegularGuest"] != null) dgv.Columns["IsRegularGuest"].HeaderText = "Постійний клієнт";
 
-                // Ховаємо стовпці, які містять складні об'єкти і не призначені для прямого відображення.
                 if (dgv.Columns["PresenceOfChild"] != null) dgv.Columns["PresenceOfChild"].Visible = false;
                 if (dgv.Columns["Reservations"] != null) dgv.Columns["Reservations"].Visible = false;
             }
         }
         catch (Exception ex)
         {
-            // Якщо щось піде не так (наприклад, немає зв'язку з БД), показуємо помилку.
             MessageBox.Show($"Помилка завантаження даних: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+
+    private void BtnSearch_Click(object? sender, EventArgs e)
+    {
+        LoadGuests(txtSearch.Text, cmbSort.SelectedItem as string);
+    }
+
+    private void BtnReset_Click(object? sender, EventArgs e)
+    {
+        txtSearch.Clear();
+        cmbSort.SelectedIndex = -1;
+        LoadGuests();
     }
 }

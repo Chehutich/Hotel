@@ -10,13 +10,20 @@ public class WelcomeControl : UserControl
         var pictureBox = new PictureBox
         {
             Dock = DockStyle.Fill,
-            SizeMode = PictureBoxSizeMode.Zoom
+            SizeMode = PictureBoxSizeMode.CenterImage
         };
+
+        const string YOUR_IMAGE_FILE_NAME = "hotel_image.jpg";
 
         try
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("hotel_image.jpg"));
+
+            // --- ОНОВЛЕНО: Додано "images." до шляху ---
+            string resourceName = "Hotel.images." + YOUR_IMAGE_FILE_NAME;
+
+            // (Альтернативний пошук)
+            // string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(YOUR_IMAGE_FILE_NAME));
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
@@ -26,15 +33,28 @@ public class WelcomeControl : UserControl
                 }
                 else
                 {
-                    this.BackColor = Color.LightGray;
+                    ShowErrorLabel(pictureBox, $"Ресурс не знайдено: {resourceName}");
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
-            this.BackColor = Color.Azure;
+            ShowErrorLabel(pictureBox, $"Помилка завантаження картинки: {ex.Message}");
         }
 
         this.Controls.Add(pictureBox);
+    }
+
+    private void ShowErrorLabel(PictureBox pb, string message)
+    {
+        pb.Dispose();
+        var label = new Label
+        {
+            Text = message,
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.MiddleCenter,
+            ForeColor = Color.Red
+        };
+        this.Controls.Add(label);
     }
 }
