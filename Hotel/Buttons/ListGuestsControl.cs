@@ -10,13 +10,16 @@ public class ListGuestsControl : UserControl
     private DataGridView dgv;
     private TextBox txtSearch;
     private ComboBox cmbSort;
+    private GroupBox guestBox;
 
     public ListGuestsControl()
     {
-        var guestBox = new GroupBox
+        guestBox = new GroupBox
         {
             Text = "Список зареєстрованих гостей",
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.None,
+            Width = 900,
+            Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(15)
         };
@@ -42,13 +45,11 @@ public class ListGuestsControl : UserControl
         cmbSort = new ComboBox { Width = 150, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList };
         var btnSearch = new Button { Text = "Пошук", Width = 100, Margin = new Padding(3) };
         var btnReset = new Button { Text = "Скинути", Width = 100, Margin = new Padding(3) };
-
-        // ОНОВЛЕНО: Додано новий пункт сортування
         cmbSort.Items.AddRange(new string[] {
             "За прізвищем (А-Я)",
             "За прізвищем (Я-А)",
             "За ID (зростання)",
-            "За ID (спадання)" // <-- Новий пункт
+            "За ID (спадання)"
         });
 
         filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft });
@@ -77,13 +78,24 @@ public class ListGuestsControl : UserControl
         this.Load += ListGuestsControl_Load;
         btnSearch.Click += BtnSearch_Click;
         btnReset.Click += BtnReset_Click;
+        this.Resize += (sender, e) => CenterControls();
     }
 
+    // Центрування головного GroupBox
+    private void CenterControls()
+    {
+        guestBox.Height = this.ClientSize.Height;
+        guestBox.Left = (this.ClientSize.Width - guestBox.Width) / 2;
+    }
+
+    // Завантаження початкових даних
     private void ListGuestsControl_Load(object? sender, EventArgs e)
     {
         LoadGuests();
+        CenterControls();
     }
 
+    // Завантаження даних гостей з опціональною фільтрацією та сортуванням
     private async void LoadGuests(string? searchTerm = null, string? sortBy = null)
     {
         try
@@ -92,6 +104,7 @@ public class ListGuestsControl : UserControl
             {
                 var query = context.Guests.AsQueryable();
 
+                // Застосування фільтру пошуку
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
                     query = query.Where(g =>
@@ -101,28 +114,19 @@ public class ListGuestsControl : UserControl
                     );
                 }
 
-                // ОНОВЛЕНО: Додано обробку нового випадку сортування
+                // Застосування сортування
                 switch (sortBy)
                 {
-                    case "За прізвищем (А-Я)":
-                        query = query.OrderBy(g => g.GuestLastName);
-                        break;
-                    case "За прізвищем (Я-А)":
-                        query = query.OrderByDescending(g => g.GuestLastName);
-                        break;
-                    case "За ID (зростання)":
-                        query = query.OrderBy(g => g.IdGuest);
-                        break;
-                    case "За ID (спадання)": 
-                        query = query.OrderByDescending(g => g.IdGuest);
-                        break;
-                    default:
-                        query = query.OrderBy(g => g.IdGuest);
-                        break;
+                    case "За прізвищем (А-Я)": query = query.OrderBy(g => g.GuestLastName); break;
+                    case "За прізвищем (Я-А)": query = query.OrderByDescending(g => g.GuestLastName); break;
+                    case "За ID (зростання)": query = query.OrderBy(g => g.IdGuest); break;
+                    case "За ID (спадання)": query = query.OrderByDescending(g => g.IdGuest); break;
+                    default: query = query.OrderBy(g => g.IdGuest); break;
                 }
 
                 dgv.DataSource = await query.ToListAsync();
 
+                // Налаштування стовпців DataGridView
                 if (dgv.Columns["IdGuest"] != null) dgv.Columns["IdGuest"].HeaderText = "ID";
                 if (dgv.Columns["GuestFirstName"] != null) dgv.Columns["GuestFirstName"].HeaderText = "Ім'я";
                 if (dgv.Columns["GuestLastName"] != null) dgv.Columns["GuestLastName"].HeaderText = "Прізвище";
@@ -130,7 +134,6 @@ public class ListGuestsControl : UserControl
                 if (dgv.Columns["DateOfBirth"] != null) dgv.Columns["DateOfBirth"].HeaderText = "Дата народження";
                 if (dgv.Columns["PassportSeries"] != null) dgv.Columns["PassportSeries"].HeaderText = "Паспорт";
                 if (dgv.Columns["IsRegularGuest"] != null) dgv.Columns["IsRegularGuest"].HeaderText = "Постійний клієнт";
-
                 if (dgv.Columns["PresenceOfChild"] != null) dgv.Columns["PresenceOfChild"].Visible = false;
                 if (dgv.Columns["Reservations"] != null) dgv.Columns["Reservations"].Visible = false;
             }
@@ -141,11 +144,13 @@ public class ListGuestsControl : UserControl
         }
     }
 
+    // Обробка натискання кнопки "Пошук"
     private void BtnSearch_Click(object? sender, EventArgs e)
     {
         LoadGuests(txtSearch.Text, cmbSort.SelectedItem as string);
     }
 
+    // Обробка натискання кнопки "Скинути"
     private void BtnReset_Click(object? sender, EventArgs e)
     {
         txtSearch.Clear();

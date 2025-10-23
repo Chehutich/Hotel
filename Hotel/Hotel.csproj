@@ -13,11 +13,13 @@
     <None Remove="hotel_image.jpg" />
     <None Remove="images\home_icon.png" />
     <None Remove="images\hotel_image.jpg" />
+    <None Remove="images\settings_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="images\home_icon.png" />
     <EmbeddedResource Include="images\hotel_image.jpg" />
+    <EmbeddedResource Include="images\settings_icon.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,23 +2,32 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System;
+using System.Linq;
 
 public class UpdateRoomStatusControl : UserControl
 {
     private TextBox txtRoomId;
     private ComboBox cmbStatus;
+    private GroupBox statusBox;
 
     public UpdateRoomStatusControl()
     {
-        var statusBox = new GroupBox
+        statusBox = new GroupBox
         {
             Text = "Оновлення статусу кімнати",
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.None,
+            Width = 700,
+            Height = 250,
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(20)
         };
 
-        var layoutPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 3 };
+        var layoutPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 3
+        };
         layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
         layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
@@ -42,36 +51,50 @@ public class UpdateRoomStatusControl : UserControl
         this.Controls.Add(statusBox);
 
         btnSave.Click += BtnSave_Click;
+        btnCancel.Click += BtnCancel_Click;
+
+        this.Load += (sender, e) => CenterControls();
+        this.Resize += (sender, e) => CenterControls();
     }
 
+    // Центрування головного GroupBox
+    private void CenterControls()
+    {
+        statusBox.Left = (this.ClientSize.Width - statusBox.Width) / 2;
+        statusBox.Top = (this.ClientSize.Height - statusBox.Height) / 2;
+    }
+
+    // Очищення полів форми
+    private void ClearForm()
+    {
+        txtRoomId.Clear();
+        cmbStatus.SelectedIndex = -1;
+    }
+
+    private void BtnCancel_Click(object? sender, EventArgs e)
+    {
+        ClearForm();
+    }
+
+    // Оновлення статусу кімнати в базі даних
     private async void BtnSave_Click(object? sender, EventArgs e)
     {
-        if (!int.TryParse(txtRoomId.Text, out int roomId))
-        {
-            MessageBox.Show("ID кімнати має бути числом.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-        if (cmbStatus.SelectedItem == null)
-        {
-            MessageBox.Show("Будь ласка, виберіть новий статус.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
+        // Валідація
+        if (!int.TryParse(txtRoomId.Text, out int roomId)) { MessageBox.Show("ID кімнати має бути числом.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+        if (cmbStatus.SelectedItem == null) { MessageBox.Show("Будь ласка, виберіть новий статус.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
         try
         {
             using (var context = new HotelDbContext())
             {
                 var roomToUpdate = await context.HotelRooms.FindAsync(roomId);
-                if (roomToUpdate == null)
-                {
-                    MessageBox.Show($"Кімнату з ID {roomId} не знайдено.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                if (roomToUpdate == null) { MessageBox.Show($"Кімнату з ID {roomId} не знайдено.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 roomToUpdate.RoomStatus = cmbStatus.SelectedItem.ToString()!;
                 await context.SaveChangesAsync();
 
                 MessageBox.Show($"Статус кімнати {roomId} успішно оновлено!", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearForm();
             }
         }
         catch (Exception ex)

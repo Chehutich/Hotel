@@ -2,24 +2,33 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 public class AddBookingControl : UserControl
 {
     private TextBox txtGuestId, txtRoomId;
     private DateTimePicker dtpCheckIn, dtpCheckOut;
     private ComboBox cmbStatus;
+    private GroupBox bookingBox;
 
     public AddBookingControl()
     {
-        var bookingBox = new GroupBox
+        bookingBox = new GroupBox
         {
             Text = "Створення нового бронювання",
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.None,
+            Width = 700,
+            Height = 450,
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(20)
         };
 
-        var layoutPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 6 };
+        var layoutPanel = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 6
+        };
         layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
         layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
@@ -52,25 +61,41 @@ public class AddBookingControl : UserControl
         this.Controls.Add(bookingBox);
 
         btnSave.Click += BtnSave_Click;
+        btnCancel.Click += BtnCancel_Click;
+
+        this.Load += (sender, e) => CenterControls();
+        this.Resize += (sender, e) => CenterControls();
     }
 
+    // Центрування головного GroupBox
+    private void CenterControls()
+    {
+        bookingBox.Left = (this.ClientSize.Width - bookingBox.Width) / 2;
+        bookingBox.Top = (this.ClientSize.Height - bookingBox.Height) / 2;
+    }
+
+    // Очищення полів форми
+    private void BtnCancel_Click(object? sender, EventArgs e)
+    {
+        ClearForm();
+    }
+
+    private void ClearForm()
+    {
+        txtGuestId.Clear();
+        txtRoomId.Clear();
+        dtpCheckIn.Value = DateTime.Now;
+        dtpCheckOut.Value = DateTime.Now;
+        cmbStatus.SelectedIndex = -1;
+    }
+
+    // Збереження нового бронювання
     private async void BtnSave_Click(object? sender, EventArgs e)
     {
-        if (!int.TryParse(txtGuestId.Text, out int guestId) || !int.TryParse(txtRoomId.Text, out int roomId))
-        {
-            MessageBox.Show("ID гостя та кімнати повинні бути числами.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-        if (dtpCheckOut.Value <= dtpCheckIn.Value)
-        {
-            MessageBox.Show("Дата виїзду повинна бути пізніше дати заїзду.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-        if (cmbStatus.SelectedItem == null)
-        {
-            MessageBox.Show("Будь ласка, виберіть статус бронювання.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
+        // Валідація введених даних
+        if (!int.TryParse(txtGuestId.Text, out int guestId) || !int.TryParse(txtRoomId.Text, out int roomId)) { MessageBox.Show("ID гостя та кімнати повинні бути числами.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+        if (dtpCheckOut.Value <= dtpCheckIn.Value) { MessageBox.Show("Дата виїзду повинна бути пізніше дати заїзду.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+        if (cmbStatus.SelectedItem == null) { MessageBox.Show("Будь ласка, виберіть статус бронювання.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
         try
         {
@@ -84,11 +109,10 @@ public class AddBookingControl : UserControl
                     CheckOutDate = DateOnly.FromDateTime(dtpCheckOut.Value),
                     BookingStatus = cmbStatus.SelectedItem.ToString()!
                 };
-
                 context.Reservations.Add(newReservation);
                 await context.SaveChangesAsync();
-
                 MessageBox.Show("Бронювання успішно створено!", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearForm();
             }
         }
         catch (Exception ex)

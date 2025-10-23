@@ -1,14 +1,19 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 public class SettingsControl : UserControl
 {
+    private GroupBox settingsBox;
+
     public SettingsControl()
     {
-        var settingsBox = new GroupBox
+        settingsBox = new GroupBox
         {
             Text = "Налаштування",
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.None,
+            Width = 700,
+            Height = 200,
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(20)
         };
@@ -22,5 +27,15 @@ public class SettingsControl : UserControl
 
         settingsBox.Controls.Add(label);
         this.Controls.Add(settingsBox);
+
+        this.Load += (sender, e) => CenterControls();
+        this.Resize += (sender, e) => CenterControls();
+    }
+
+    // Центрування головного GroupBox
+    private void CenterControls()
+    {
+        settingsBox.Left = (this.ClientSize.Width - settingsBox.Width) / 2;
+        settingsBox.Top = (this.ClientSize.Height - settingsBox.Height) / 2;
     }
 }

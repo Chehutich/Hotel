@@ -10,13 +10,16 @@ public class CheckAvailabilityControl : UserControl
     private DataGridView dgv;
     private DateTimePicker dtpCheckIn;
     private DateTimePicker dtpCheckOut;
+    private GroupBox availabilityBox;
 
     public CheckAvailabilityControl()
     {
-        var availabilityBox = new GroupBox
+        availabilityBox = new GroupBox
         {
             Text = "Перевірка доступних номерів",
-            Dock = DockStyle.Fill,
+            Dock = DockStyle.None,
+            Width = 900,
+            Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
             Font = new Font("Segoe UI", 10F),
             Padding = new Padding(15)
         };
@@ -63,60 +66,67 @@ public class CheckAvailabilityControl : UserControl
         availabilityBox.Controls.Add(mainLayoutPanel);
         this.Controls.Add(availabilityBox);
 
-        // Add event handlers
         this.Load += CheckAvailabilityControl_Load;
         btnSearch.Click += BtnSearch_Click;
+        this.Resize += (sender, e) => CenterControls();
     }
 
+    // Центрування головного GroupBox
+    private void CenterControls()
+    {
+        availabilityBox.Height = this.ClientSize.Height;
+        availabilityBox.Left = (this.ClientSize.Width - availabilityBox.Width) / 2;
+    }
+
+    // Завантаження початкового списку доступних кімнат
     private async void CheckAvailabilityControl_Load(object? sender, EventArgs e)
     {
-        // On initial load, just show all rooms with "available" status
         await LoadAvailableRooms();
+        CenterControls();
     }
 
+    // Обробка пошуку за вказаним діапазоном дат
     private async void BtnSearch_Click(object? sender, EventArgs e)
     {
-        // On button click, show rooms available for the specific date range
         await LoadAvailableRooms(DateOnly.FromDateTime(dtpCheckIn.Value), DateOnly.FromDateTime(dtpCheckOut.Value));
     }
 
+    // Завантаження доступних кімнат, опціонально фільтруючи за датою
     private async Task LoadAvailableRooms(DateOnly? checkIn = null, DateOnly? checkOut = null)
     {
         try
         {
             using (var context = new HotelDbContext())
             {
-                // Start with a base query for rooms that are generally available
                 var availableRoomsQuery = context.HotelRooms.Where(hr => hr.RoomStatus == "доступна");
 
-                // If a date range is provided, filter out rooms that are booked in that period
+                // Фільтрація заброньованих кімнат, якщо вказано дати
                 if (checkIn.HasValue && checkOut.HasValue)
                 {
-                    // Find IDs of rooms that are booked during the selected date range
                     var bookedRoomIds = await context.Reservations
                         .Where(r => r.BookingStatus == "підтверджено" &&
                                     checkIn.Value < r.CheckOutDate &&
-                                    checkOut.Value > r.CheckInDate) // This logic checks for any overlap
+                                    checkOut.Value > r.CheckInDate)
                         .Select(r => r.IdRoom)
                         .Distinct()
                         .ToListAsync();
 
-                    // Exclude the booked rooms from our main query
                     availableRoomsQuery = availableRoomsQuery.Where(hr => !bookedRoomIds.Contains(hr.IdRooms));
                 }
 
-                // Execute the final query and select data for display
+                // Вибірка та відображення даних
                 var roomsToShow = await availableRoomsQuery
                     .Select(hr => new {
                         RoomId = hr.IdRooms,
                         RoomType = hr.RoomType,
                         Status = hr.RoomStatus
                     })
+                    .OrderBy(r => r.RoomId)
                     .ToListAsync();
 
                 dgv.DataSource = roomsToShow;
 
-                // Configure column headers
+                // Налаштування стовпців
                 dgv.Columns["RoomId"].HeaderText = "Номер кімнати";
                 dgv.Columns["RoomType"].HeaderText = "Тип кімнати";
                 dgv.Columns["Status"].HeaderText = "Статус";

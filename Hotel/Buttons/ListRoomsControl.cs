@@ -5,18 +5,18 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-public class ListBookingsControl : UserControl
+public class ListRoomsControl : UserControl
 {
     private DataGridView dgv;
+    private GroupBox roomsBox;
     private TextBox txtSearch;
     private ComboBox cmbSort;
-    private GroupBox bookingBox;
 
-    public ListBookingsControl()
+    public ListRoomsControl()
     {
-        bookingBox = new GroupBox
+        roomsBox = new GroupBox
         {
-            Text = "Список бронювань",
+            Text = "Список кімнат готелю",
             Dock = DockStyle.None,
             Width = 900,
             Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
@@ -47,9 +47,13 @@ public class ListBookingsControl : UserControl
         var btnReset = new Button { Text = "Скинути", Width = 100, Margin = new Padding(3) };
 
         cmbSort.Items.AddRange(new string[] {
-            "За датою заїзду (новіші)",
-            "За датою заїзду (старіші)",
-            "За ID бронювання"
+            "За номером (зростання)",
+            "За номером (спадання)",
+            "За типом (А-Я)",
+            "За типом (Я-А)",
+            "За статусом (Доступні спочатку)",
+            "За статусом (На ремонті спочатку)",
+            "За статусом (На прибиранні спочатку)"
         });
 
         filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft });
@@ -72,10 +76,10 @@ public class ListBookingsControl : UserControl
         mainLayout.Controls.Add(filterPanel, 0, 0);
         mainLayout.Controls.Add(dgv, 0, 1);
 
-        bookingBox.Controls.Add(mainLayout);
-        this.Controls.Add(bookingBox);
+        roomsBox.Controls.Add(mainLayout);
+        this.Controls.Add(roomsBox);
 
-        this.Load += ListBookingsControl_Load;
+        this.Load += ListRoomsControl_Load;
         btnSearch.Click += BtnSearch_Click;
         btnReset.Click += BtnReset_Click;
         this.Resize += (sender, e) => CenterControls();
@@ -84,81 +88,75 @@ public class ListBookingsControl : UserControl
     // Центрування головного GroupBox
     private void CenterControls()
     {
-        bookingBox.Height = this.ClientSize.Height;
-        bookingBox.Left = (this.ClientSize.Width - bookingBox.Width) / 2;
+        roomsBox.Height = this.ClientSize.Height;
+        roomsBox.Left = (this.ClientSize.Width - roomsBox.Width) / 2;
     }
 
     // Завантаження початкових даних
-    private void ListBookingsControl_Load(object? sender, EventArgs e)
+    private async void ListRoomsControl_Load(object? sender, EventArgs e)
     {
-        LoadBookings();
+        await LoadRooms();
         CenterControls();
     }
 
-    // Завантаження даних бронювань з опціональною фільтрацією та сортуванням
-    private async void LoadBookings(string? searchTerm = null, string? sortBy = null)
+    // Завантаження даних кімнат з опціональною фільтрацією та сортуванням
+    private async Task LoadRooms(string? searchTerm = null, string? sortBy = null)
     {
         try
         {
             using (var context = new HotelDbContext())
             {
-                var query = context.Reservations
-                                   .Include(r => r.IdGuestNavigation)
-                                   .AsQueryable();
+                var query = context.HotelRooms.AsQueryable();
 
                 // Застосування фільтру пошуку
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    query = query.Where(r =>
-                        r.IdGuestNavigation.GuestLastName.Contains(searchTerm) ||
-                        r.IdRoom.ToString().Contains(searchTerm) ||
-                        r.BookingStatus.Contains(searchTerm)
+                    query = query.Where(hr =>
+                        hr.RoomType.Contains(searchTerm) ||
+                        hr.RoomStatus.Contains(searchTerm)
                     );
                 }
 
                 // Застосування сортування
                 switch (sortBy)
                 {
-                    case "За датою заїзду (новіші)": query = query.OrderByDescending(r => r.CheckInDate); break;
-                    case "За датою заїзду (старіші)": query = query.OrderBy(r => r.CheckInDate); break;
-                    case "За ID бронювання": query = query.OrderBy(r => r.IdBooking); break;
-                    default: query = query.OrderByDescending(r => r.CheckInDate); break;
+                    case "За номером (спадання)": query = query.OrderByDescending(hr => hr.IdRooms); break;
+                    case "За типом (А-Я)": query = query.OrderBy(hr => hr.RoomType); break;
+                    case "За типом (Я-А)": query = query.OrderByDescending(hr => hr.RoomType); break;
+                    case "За статусом (Доступні)": query = query.OrderBy(hr => hr.RoomStatus != "доступна").ThenBy(hr => hr.RoomStatus); break;
+                    case "За статусом (На ремонті)": query = query.OrderBy(hr => hr.RoomStatus != "на ремонті").ThenBy(hr => hr.RoomStatus); break;
+                    case "За статусом (На прибиранні)": query = query.OrderBy(hr => hr.RoomStatus != "на прибиранні").ThenBy(hr => hr.RoomStatus); break;
+                    case "За номером (зростання)":
+                    default: query = query.OrderBy(hr => hr.IdRooms); break;
                 }
 
-                // Проєкція даних для відображення
-                var bookings = await query
-                    .Select(r => new
+                var rooms = await query
+                    .Select(hr => new
                     {
-                        BookingId = r.IdBooking,
-                        GuestName = r.IdGuestNavigation.GuestFirstName + " " + r.IdGuestNavigation.GuestLastName,
-                        RoomId = r.IdRoom,
-                        CheckIn = r.CheckInDate,
-                        CheckOut = r.CheckOutDate,
-                        Status = r.BookingStatus
+                        hr.IdRooms,
+                        hr.RoomType,
+                        hr.RoomStatus
                     })
                     .ToListAsync();
 
-                dgv.DataSource = bookings;
+                dgv.DataSource = rooms;
 
                 // Налаштування стовпців
-                dgv.Columns["BookingId"].HeaderText = "ID Бронювання";
-                dgv.Columns["GuestName"].HeaderText = "Ім'я гостя";
-                dgv.Columns["RoomId"].HeaderText = "Номер кімнати";
-                dgv.Columns["CheckIn"].HeaderText = "Дата заїзду";
-                dgv.Columns["CheckOut"].HeaderText = "Дата виїзду";
-                dgv.Columns["Status"].HeaderText = "Статус";
+                if (dgv.Columns["IdRooms"] != null) dgv.Columns["IdRooms"].HeaderText = "Номер кімнати";
+                if (dgv.Columns["RoomType"] != null) dgv.Columns["RoomType"].HeaderText = "Тип кімнати";
+                if (dgv.Columns["RoomStatus"] != null) dgv.Columns["RoomStatus"].HeaderText = "Статус";
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Помилка завантаження бронювань: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Помилка завантаження списку кімнат: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
     // Обробка натискання кнопки "Пошук"
     private void BtnSearch_Click(object? sender, EventArgs e)
     {
-        LoadBookings(txtSearch.Text, cmbSort.SelectedItem as string);
+        LoadRooms(txtSearch.Text, cmbSort.SelectedItem as string);
     }
 
     // Обробка натискання кнопки "Скинути"
@@ -166,6 +164,6 @@ public class ListBookingsControl : UserControl
     {
         txtSearch.Clear();
         cmbSort.SelectedIndex = -1;
-        LoadBookings();
+        LoadRooms();
     }
 }

@@ -10,20 +10,16 @@ public class WelcomeControl : UserControl
         var pictureBox = new PictureBox
         {
             Dock = DockStyle.Fill,
-            SizeMode = PictureBoxSizeMode.CenterImage
+            SizeMode = PictureBoxSizeMode.CenterImage 
         };
 
         const string YOUR_IMAGE_FILE_NAME = "hotel_image.jpg";
 
+        // Завантаження зображення з вбудованих ресурсів
         try
         {
             var assembly = Assembly.GetExecutingAssembly();
-
-            // --- ОНОВЛЕНО: Додано "images." до шляху ---
             string resourceName = "Hotel.images." + YOUR_IMAGE_FILE_NAME;
-
-            // (Альтернативний пошук)
-            // string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(YOUR_IMAGE_FILE_NAME));
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
@@ -45,6 +41,7 @@ public class WelcomeControl : UserControl
         this.Controls.Add(pictureBox);
     }
 
+    // Відображення помилки, якщо зображення не завантажилось
     private void ShowErrorLabel(PictureBox pb, string message)
     {
         pb.Dispose();
