@@ -30,6 +30,33 @@
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastReport">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Bars">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.Bars.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Editor">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Install">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.Install.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.VSDesign">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.VSDesign.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Web">
+      <HintPath>bin\Debug\net9.0-windows\FastReport.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Bars">
+      <HintPath>bin\Debug\net9.0-windows\FastReport_Bars.dll</HintPath>
+    </Reference>
+    <Reference Include="FastReport.Editor">
+      <HintPath>bin\Debug\net9.0-windows\FastReport_Editor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 	<ItemGroup>
 		<None Update=".env">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
