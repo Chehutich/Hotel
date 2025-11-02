@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hotel.Models // Або Hotel.DTOs
+namespace Hotel.Models 
 {
     public class GuestReportDto
     {

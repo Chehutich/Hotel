@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Hotel // Переконайтесь, що простір імен тут правильний
+namespace Hotel 
 {
     public static class ClassSerializare
     {
@@ -21,7 +21,7 @@ namespace Hotel // Переконайтесь, що простір імен ту
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message); // Залишаємо повідомлення про помилку тут
+                MessageBox.Show(ex.Message); 
             }
         }
 
@@ -34,7 +34,6 @@ namespace Hotel // Переконайтесь, що простір імен ту
                 inObject = (T)reader.Deserialize(file);
                 file.Close();
             }
-            // Можна додати else блок з повідомленням, якщо файл не знайдено
         }
     }
 }

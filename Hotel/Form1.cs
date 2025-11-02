@@ -15,27 +15,26 @@ namespace Hotel
             InitializeUI();
         }
 
-        // Ініціалізація компонентів головної форми
         private void InitializeUI()
         {
             this.Text = "Система управління готелем";
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.Size = new Size(950, 650);
+            this.Size = new Size(1024, 768); // Трохи збільшив базовий розмір
             this.BackColor = Color.FromArgb(240, 240, 240);
             this.WindowState = FormWindowState.Maximized;
 
             var mainLeftContainer = new Panel
             {
                 Dock = DockStyle.Left,
-                Width = 220,
+                Width = 260, // ЗБІЛЬШЕНО
                 BackColor = Color.FromArgb(225, 225, 225)
             };
 
             var homePanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 60,
-                Padding = new Padding(10),
+                Height = 70, // ЗБІЛЬШЕНО
+                Padding = new Padding(15, 10, 10, 10), // Змінено відступ
                 BackColor = Color.Transparent,
                 FlowDirection = FlowDirection.LeftToRight
             };
@@ -43,7 +42,7 @@ namespace Hotel
             const string YOUR_HOME_ICON_FILE_NAME = "home_icon.png";
             var homePictureBox = new PictureBox
             {
-                Size = new Size(40, 40),
+                Size = new Size(45, 45), // ЗБІЛЬШЕНО
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Cursor = Cursors.Hand
             };
@@ -54,10 +53,10 @@ namespace Hotel
             const string YOUR_SETTINGS_ICON_FILE_NAME = "settings_icon.png";
             var settingsPictureBox = new PictureBox
             {
-                Size = new Size(40, 40),
+                Size = new Size(45, 45), // ЗБІЛЬШЕНО
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Cursor = Cursors.Hand,
-                Margin = new Padding(10, 3, 0, 0)
+                Margin = new Padding(10, 5, 0, 0) // Змінено відступ
             };
             LoadIconToPictureBox(settingsPictureBox, YOUR_SETTINGS_ICON_FILE_NAME);
             settingsPictureBox.Click += BtnSettings_Click;
@@ -66,7 +65,7 @@ namespace Hotel
             var buttonFlowPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                Padding = new Padding(10),
+                Padding = new Padding(15, 10, 10, 10), // Змінено відступ
                 FlowDirection = FlowDirection.TopDown,
                 BackColor = Color.Transparent
             };
@@ -78,7 +77,7 @@ namespace Hotel
 
             pnlContent = new Panel
             {
-                Padding = new Padding(20),
+                Padding = new Padding(30), // ЗБІЛЬШЕНО
                 Dock = DockStyle.Fill,
                 BackColor = Color.White
             };
@@ -96,15 +95,14 @@ namespace Hotel
                 new { Text = "Оновити статус номерів", ClickAction = (Action<object?, EventArgs>)BtnUpdateStatus_Click }
             };
 
-            // Створення кнопок головного меню
             foreach (var mapping in buttonMappings)
             {
                 var button = new Button
                 {
                     Text = mapping.Text,
-                    Size = new Size(190, 40),
+                    Size = new Size(230, 50), // ЗБІЛЬШЕНО
                     Margin = new Padding(0, 0, 0, 10),
-                    Font = new Font("Segoe UI", 10F),
+                    Font = new Font("Segoe UI", 12F, FontStyle.Regular), // ЗБІЛЬШЕНО
                     BackColor = SystemColors.Control
                 };
                 button.Click += new EventHandler(mapping.ClickAction);
@@ -114,7 +112,6 @@ namespace Hotel
             this.Load += (sender, e) => ShowControl(new WelcomeControl());
         }
 
-        // Завантаження іконки з вбудованих ресурсів
         private void LoadIconToPictureBox(PictureBox pb, string iconFileName)
         {
             try
@@ -141,15 +138,13 @@ namespace Hotel
             }
         }
 
-        // Відображення вибраного UserControl на панелі контенту
         private void ShowControl(Control control)
         {
             pnlContent.Controls.Clear();
-            control.Dock = DockStyle.Fill; // Завжди розтягуємо
+            control.Dock = DockStyle.Fill;
             pnlContent.Controls.Add(control);
         }
 
-        // Обробники натискання кнопок для відображення відповідних UserControl
         private void BtnHome_Click(object? sender, EventArgs e) => ShowControl(new WelcomeControl());
         private void BtnCheckAvailability_Click(object? sender, EventArgs e) => ShowControl(new CheckAvailabilityControl());
         private void BtnAddGuest_Click(object? sender, EventArgs e) => ShowControl(new AddGuestControl());

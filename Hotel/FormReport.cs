@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using FastReport;
 using System.IO;
 using Hotel.Models;
-using System.Reflection; // Для ToDataTable
+using System.Reflection; 
 
 namespace Hotel
 {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
-using System.Globalization; // Added for CultureInfo
+using System.Globalization;
 
 namespace Hotel
 {
@@ -17,6 +17,7 @@ namespace Hotel
         private TextBox txtSearch;
         private ComboBox cmbSort;
         private GroupBox guestBox;
+        private Font commonFont = new Font("Segoe UI", 10F); // Шрифт для фільтрів
 
         public ListGuestsControl()
         {
@@ -24,9 +25,9 @@ namespace Hotel
             {
                 Text = "Список зареєстрованих гостей",
                 Dock = DockStyle.None,
-                Width = 900,
+                Width = 1100, // ЗБІЛЬШЕНО
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
-                Font = new Font("Segoe UI", 10F),
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
                 Padding = new Padding(15)
             };
 
@@ -44,14 +45,15 @@ namespace Hotel
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = false,
-                AutoSize = true
+                AutoSize = true,
+                Padding = new Padding(0, 0, 0, 10) // Відступ знизу
             };
 
-            txtSearch = new TextBox { Width = 150, Margin = new Padding(3) };
-            cmbSort = new ComboBox { Width = 150, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList };
-            var btnSearch = new Button { Text = "Пошук", Width = 80, Margin = new Padding(3) };
-            var btnReset = new Button { Text = "Скинути", Width = 80, Margin = new Padding(3) };
-            var btnReport = new Button { Text = "Звіт", Width = 80, Margin = new Padding(3) };
+            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
+            cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont }; // ЗБІЛЬШЕНО
+            var btnSearch = new Button { Text = "Пошук", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
+            var btnReset = new Button { Text = "Скинути", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШEНО
+            var btnReport = new Button { Text = "Звіт", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
 
             cmbSort.Items.AddRange(new string[] {
             "За прізвищем (А-Я)",
@@ -60,9 +62,9 @@ namespace Hotel
             "За ID (спадання)"
             });
 
-            filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft });
+            filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
             filterPanel.Controls.Add(txtSearch);
-            filterPanel.Controls.Add(new Label { Text = "Сортувати:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0) });
+            filterPanel.Controls.Add(new Label { Text = "Сортувати:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
             filterPanel.Controls.Add(btnReset);
@@ -75,8 +77,11 @@ namespace Hotel
                 ReadOnly = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.None
+                BorderStyle = BorderStyle.None,
+                Font = new Font("Segoe UI", 10F) // ЗБІЛЬШЕНО шрифт таблиці
             };
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold); // ЗБІЛЬШЕНО заголовки
+            dgv.RowTemplate.Height = 30; // ЗБІЛЬШЕНО висоту рядків
 
             mainLayout.Controls.Add(filterPanel, 0, 0);
             mainLayout.Controls.Add(dgv, 0, 1);
@@ -93,8 +98,9 @@ namespace Hotel
 
         private void CenterControls()
         {
-            guestBox.Height = this.ClientSize.Height;
+            guestBox.Height = this.ClientSize.Height - 10; // Невеликий відступ
             guestBox.Left = (this.ClientSize.Width - guestBox.Width) / 2;
+            guestBox.Top = 5; // Відступ зверху
         }
 
         private void ListGuestsControl_Load(object? sender, EventArgs e)
@@ -186,13 +192,12 @@ namespace Hotel
             try
             {
                 Hotel.ClassSerializare.SerializeToXml<List<GuestReportDto>>(ref guestsToSerialize, fileName);
-
                 FormReport frmReport = new FormReport();
-                frmReport.ShowDialog();
+                frmReport.Show(); // Відкриваємо немодально
             }
             catch (Exception ex)
             {
-                // MessageBox.Show($"Помилка серіалізації або відкриття звіту: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show($"Помилка: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
