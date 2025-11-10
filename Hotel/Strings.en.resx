@@ -282,6 +282,39 @@
   <data name="ListRoomsTitle" xml:space="preserve">
     <value>Hotel Room List</value>
   </data>
+  <data name="Login_Button" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_Error_Connection" xml:space="preserve">
+    <value>Failed to connect to the database:</value>
+  </data>
+  <data name="Login_Error_ConnectionTitle" xml:space="preserve">
+    <value>Connection Error</value>
+  </data>
+  <data name="Login_Error_Invalid" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
+  <data name="Login_Error_Title" xml:space="preserve">
+    <value>Login Error</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password:</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Authorization</value>
+  </data>
+  <data name="Login_Username" xml:space="preserve">
+    <value>Username:</value>
+  </data>
+  <data name="Login_Validation_Empty" xml:space="preserve">
+    <value>Please enter a username and password.</value>
+  </data>
+  <data name="Logout_Confirm_Text" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="Logout_Confirm_Title" xml:space="preserve">
+    <value>Logout</value>
+  </data>
   <data name="MsgLanguageRestart" xml:space="preserve">
     <value>Language settings will be applied after restart.</value>
   </data>
@@ -290,6 +323,15 @@
   </data>
   <data name="MsgNoDataForReport" xml:space="preserve">
     <value>No data to generate report.</value>
+  </data>
+  <data name="Role_Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="Role_Receptionist" xml:space="preserve">
+    <value>Receptionist</value>
+  </data>
+  <data name="Role_Unknown" xml:space="preserve">
+    <value>Unknown Role</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>

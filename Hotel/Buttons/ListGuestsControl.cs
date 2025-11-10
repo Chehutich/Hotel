@@ -5,7 +5,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic; // (ДОДАНО)
+using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 
@@ -18,13 +18,10 @@ namespace Hotel
         private ComboBox cmbSort;
         private GroupBox guestBox;
         private Font commonFont = new Font("Segoe UI", 10F);
-
-        // (НОВЕ) Словник для сортування: Ключ (для коду), Значення (для користувача)
         private Dictionary<string, string> guestSortOptions;
 
         public ListGuestsControl()
         {
-            // (НОВЕ) Ініціалізація словника сортування
             guestSortOptions = new Dictionary<string, string>
             {
                 { "LastName_ASC", Strings.Sort_Guest_LastName_ASC },
@@ -40,7 +37,8 @@ namespace Hotel
                 Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(15)
+                Padding = new Padding(15),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var mainLayout = new TableLayoutPanel
@@ -61,20 +59,24 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont };
-            cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
-            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
-            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
-            var btnReport = new Button { Text = Strings.ButtonReport, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
+            // (ЗМІНЕНО) Кольори полів вводу
+            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (ЗМІНЕНО) Прив'язка ComboBox до словника
+            // (ЗМІНЕНО) Кольори кнопок
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            var btnReport = new Button { Text = Strings.ButtonReport, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
             cmbSort.DataSource = new BindingSource(guestSortOptions, null);
-            cmbSort.DisplayMember = "Value"; // Показуємо користувачу локалізований текст
-            cmbSort.ValueMember = "Key";     // В коді використовуємо ключ (напр. "LastName_ASC")
+            cmbSort.DisplayMember = "Value";
+            cmbSort.ValueMember = "Key";
 
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0), ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(txtSearch);
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont, ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
             filterPanel.Controls.Add(btnReset);
@@ -86,11 +88,20 @@ namespace Hotel
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White,
+                BackgroundColor = ThemeManager.GridBackground, // (ЗМІНЕНО)
                 BorderStyle = BorderStyle.None,
                 Font = new Font("Segoe UI", 10F)
             };
+
+            // (ЗМІНЕНО) Кольори сітки
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = ThemeManager.GridHeaderForeColor;
+            dgv.DefaultCellStyle.BackColor = ThemeManager.InputBackground;
+            dgv.DefaultCellStyle.ForeColor = ThemeManager.InputForeColor;
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.RowHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+
             dgv.RowTemplate.Height = 30;
 
             mainLayout.Controls.Add(filterPanel, 0, 0);
@@ -136,7 +147,6 @@ namespace Hotel
                         );
                     }
 
-                    // (ЗМІНЕНО) Switch тепер використовує КЛЮЧІ, а не текст
                     switch (sortBy)
                     {
                         case "LastName_ASC": query = query.OrderBy(g => g.GuestLastName); break;
@@ -167,7 +177,6 @@ namespace Hotel
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {
-            // (ЗМІНЕНО) Передаємо КЛЮЧ (SelectedValue) замість тексту (SelectedItem)
             LoadGuests(txtSearch.Text, cmbSort.SelectedValue as string);
         }
 
@@ -180,7 +189,6 @@ namespace Hotel
 
         private void BtnReport_Click(object? sender, EventArgs e)
         {
-            // (Код не змінено, він був коректним)
             var originalGuestList = dgv.DataSource as List<Guest>;
 
             if (originalGuestList == null || !originalGuestList.Any())

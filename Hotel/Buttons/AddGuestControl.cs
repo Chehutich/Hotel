@@ -13,18 +13,20 @@ namespace Hotel
         private DateTimePicker dtpDateOfBirth;
         private Button btnSave, btnCancel;
         private GroupBox guestBox;
-        private Font commonFont = new Font("Segoe UI", 11F); // Виносимо шрифт
+        private Font commonFont = new Font("Segoe UI", 11F);
+        private Font pickerFont = new Font("Segoe UI", 12F);
 
         public AddGuestControl()
         {
             guestBox = new GroupBox
             {
-                Text = Strings.AddGuestTitle, // (ЗМІНЕНО)
+                Text = Strings.AddGuestTitle,
                 Dock = DockStyle.None,
                 Width = 800,
                 Height = 480,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(25)
+                Padding = new Padding(25),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var layoutPanel = new TableLayoutPanel
@@ -37,24 +39,34 @@ namespace Hotel
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            txtFirstName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            txtLastName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            txtPhoneNumber = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            dtpDateOfBirth = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, Format = DateTimePickerFormat.Long };
-            txtPassport = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
+            // (ЗМІНЕНО) Кольори полів вводу
+            txtFirstName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            txtLastName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            txtPhoneNumber = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
-            btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
+            // (ЗМІНЕНО) Кольори календаря
+            dtpDateOfBirth = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
+            dtpDateOfBirth.CalendarMonthBackground = ThemeManager.InputBackground;
+            dtpDateOfBirth.CalendarForeColor = ThemeManager.InputForeColor;
+            dtpDateOfBirth.CalendarTitleBackColor = ThemeManager.ButtonBackground;
+            dtpDateOfBirth.CalendarTitleForeColor = ThemeManager.ButtonForeColor;
+            dtpDateOfBirth.CalendarTrailingForeColor = Color.Gray;
 
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelFirstName), 0, 0); // (ЗМІНЕНО)
+            txtPassport = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+
+            // (ЗМІНЕНО) Кольори кнопок
+            btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelFirstName), 0, 0);
             layoutPanel.Controls.Add(txtFirstName, 1, 0);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelLastName), 0, 1); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelLastName), 0, 1);
             layoutPanel.Controls.Add(txtLastName, 1, 1);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPhoneNumber), 0, 2); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPhoneNumber), 0, 2);
             layoutPanel.Controls.Add(txtPhoneNumber, 1, 2);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelDateOfBirth), 0, 3); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelDateOfBirth), 0, 3);
             layoutPanel.Controls.Add(dtpDateOfBirth, 1, 3);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPassport), 0, 4); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPassport), 0, 4);
             layoutPanel.Controls.Add(txtPassport, 1, 4);
             var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
             buttonPanel.Controls.Add(btnSave);
@@ -79,7 +91,6 @@ namespace Hotel
 
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
-            // (ЗМІНЕНО) Використання ключів валідації
             if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text)) { MessageBox.Show(Strings.ValidationNamesRequired, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             string phoneNumber = txtPhoneNumber.Text;
             if (!string.IsNullOrWhiteSpace(phoneNumber)) { string phoneRegexPattern = @"^(\+380\d{9}|0\d{9})$"; if (!Regex.IsMatch(phoneNumber, phoneRegexPattern)) { MessageBox.Show(Strings.ValidationPhoneFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
@@ -109,14 +120,12 @@ namespace Hotel
                     context.Guests.Add(newGuest);
                     await context.SaveChangesAsync();
 
-                    // (ПРИМІТКА) Ключа для "Успіх" не було, залишаю ваш текст
                     MessageBox.Show("Гостя успішно додано!", Strings.AddGuestTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                 }
             }
             catch (Exception ex)
             {
-                // (ЗМІНЕНО)
                 MessageBox.Show($"Помилка збереження гостя: {ex.Message}\n\n{ex.InnerException?.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -143,7 +152,8 @@ namespace Hotel
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleRight,
                 Margin = new Padding(5),
-                Font = commonFont
+                Font = commonFont,
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
         }
     }

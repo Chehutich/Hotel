@@ -14,17 +14,19 @@ namespace Hotel
         private DateTimePicker dtpCheckOut;
         private GroupBox availabilityBox;
         private Font commonFont = new Font("Segoe UI", 10F);
+        private Font pickerFont = new Font("Segoe UI", 12F);
 
         public CheckAvailabilityControl()
         {
             availabilityBox = new GroupBox
             {
-                Text = Strings.CheckAvailabilityTitle, // (ЗМІНЕНО)
+                Text = Strings.CheckAvailabilityTitle,
                 Dock = DockStyle.None,
                 Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(15)
+                Padding = new Padding(15),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var mainLayoutPanel = new TableLayoutPanel
@@ -45,13 +47,29 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            dtpCheckIn = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) };
-            dtpCheckOut = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) };
-            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Font = commonFont, Margin = new Padding(10, 0, 0, 0) }; // (ЗМІНЕНО)
+            // (ЗМІНЕНО) Кольори календаря
+            dtpCheckIn = new DateTimePicker { Width = 160, Font = pickerFont, Margin = new Padding(3) };
+            dtpCheckIn.CalendarMonthBackground = ThemeManager.InputBackground;
+            dtpCheckIn.CalendarForeColor = ThemeManager.InputForeColor;
+            dtpCheckIn.CalendarTitleBackColor = ThemeManager.ButtonBackground;
+            dtpCheckIn.CalendarTitleForeColor = ThemeManager.ButtonForeColor;
+            dtpCheckIn.CalendarTrailingForeColor = Color.Gray;
 
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelFrom, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5, 8, 5, 0), Font = commonFont }); // (ЗМІНЕНО)
+            dtpCheckOut = new DateTimePicker { Width = 160, Font = pickerFont, Margin = new Padding(3) };
+            dtpCheckOut.CalendarMonthBackground = ThemeManager.InputBackground;
+            dtpCheckOut.CalendarForeColor = ThemeManager.InputForeColor;
+            dtpCheckOut.CalendarTitleBackColor = ThemeManager.ButtonBackground;
+            dtpCheckOut.CalendarTitleForeColor = ThemeManager.ButtonForeColor;
+            dtpCheckOut.CalendarTrailingForeColor = Color.Gray;
+
+            // (ЗМІНЕНО) Кольори кнопок
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Font = commonFont, Margin = new Padding(10, 0, 0, 0), BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelFrom, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5, 8, 5, 0), Font = commonFont, ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(dtpCheckIn);
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelTo, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 8, 5, 0), Font = commonFont }); // (ЗМІНЕНО)
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelTo, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 8, 5, 0), Font = commonFont, ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(dtpCheckOut);
             filterPanel.Controls.Add(btnSearch);
 
@@ -61,11 +79,21 @@ namespace Hotel
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White,
+                BackgroundColor = ThemeManager.GridBackground, // (ЗМІНЕНО)
                 BorderStyle = BorderStyle.None,
                 Font = new Font("Segoe UI", 10F)
             };
+
+            // (ЗМІНЕНО) Кольори сітки
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = ThemeManager.GridHeaderForeColor;
+            dgv.DefaultCellStyle.BackColor = ThemeManager.InputBackground;
+            dgv.DefaultCellStyle.ForeColor = ThemeManager.InputForeColor;
+            dgv.EnableHeadersVisualStyles = false; // Важливо для застосування стилів заголовків
+            dgv.RowHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+
+
             dgv.RowTemplate.Height = 30;
 
             mainLayoutPanel.Controls.Add(filterPanel, 0, 0);
@@ -95,7 +123,6 @@ namespace Hotel
         {
             if (dtpCheckOut.Value <= dtpCheckIn.Value)
             {
-                // (ЗМІНЕНО)
                 MessageBox.Show(Strings.ValidationDateError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -134,7 +161,6 @@ namespace Hotel
 
                     dgv.DataSource = roomsToShow;
 
-                    // (ЗМІНЕНО) Локалізація заголовків
                     dgv.Columns["RoomId"].HeaderText = Strings.Col_RoomID;
                     dgv.Columns["RoomType"].HeaderText = Strings.Col_RoomType;
                     dgv.Columns["Status"].HeaderText = Strings.Col_Status;
@@ -142,7 +168,6 @@ namespace Hotel
             }
             catch (Exception ex)
             {
-                // (ЗМІНЕНО)
                 MessageBox.Show($"Помилка завантаження кімнат: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

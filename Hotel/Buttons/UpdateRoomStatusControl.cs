@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System;
 using System.Linq;
-using System.Collections.Generic; // (ДОДАНО)
+using System.Collections.Generic;
 
 namespace Hotel
 {
@@ -13,15 +13,10 @@ namespace Hotel
         private ComboBox cmbStatus;
         private GroupBox statusBox;
         private Font commonFont = new Font("Segoe UI", 11F);
-
-        // (НОВЕ) Словник для статусів
         private Dictionary<string, string> roomStatusOptions;
 
         public UpdateRoomStatusControl()
         {
-            // (НОВЕ) Ініціалізація словника статусів
-            // Ключ - це значення, яке йде в БД (як у вашому БД.txt)
-            // Значення - це те, що бачить користувач (з .resx)
             roomStatusOptions = new Dictionary<string, string>
             {
                 { "доступна", Strings.Status_Available },
@@ -36,7 +31,8 @@ namespace Hotel
                 Width = 800,
                 Height = 300,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(25)
+                Padding = new Padding(25),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var layoutPanel = new TableLayoutPanel
@@ -48,13 +44,13 @@ namespace Hotel
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            txtRoomId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            cmbStatus = new ComboBox { Dock = DockStyle.Fill, Margin = new Padding(5), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
+            // (ЗМІНЕНО) Кольори полів вводу
+            txtRoomId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            cmbStatus = new ComboBox { Dock = DockStyle.Fill, Margin = new Padding(5), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (ЗМІНЕНО) Прив'язка ComboBox до словника
             cmbStatus.DataSource = new BindingSource(roomStatusOptions, null);
-            cmbStatus.DisplayMember = "Value"; // "Available"
-            cmbStatus.ValueMember = "Key";     // "доступна"
+            cmbStatus.DisplayMember = "Value";
+            cmbStatus.ValueMember = "Key";
 
             layoutPanel.Controls.Add(CreateLabel(Strings.LabelRoomID), 0, 0);
             layoutPanel.Controls.Add(txtRoomId, 1, 0);
@@ -62,8 +58,11 @@ namespace Hotel
             layoutPanel.Controls.Add(cmbStatus, 1, 1);
 
             var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
-            var btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont };
-            var btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont };
+
+            // (ЗМІНЕНО) Кольори кнопок
+            var btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            var btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
             buttonPanel.Controls.Add(btnSave);
             buttonPanel.Controls.Add(btnCancel);
             layoutPanel.Controls.Add(buttonPanel, 1, 2);
@@ -98,7 +97,7 @@ namespace Hotel
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
             if (!int.TryParse(txtRoomId.Text, out int roomId)) { MessageBox.Show(Strings.ValidationIdError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            if (cmbStatus.SelectedValue == null) { MessageBox.Show(Strings.ValidationStatusError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } // (ЗМІНЕНО) SelectedValue
+            if (cmbStatus.SelectedValue == null) { MessageBox.Show(Strings.ValidationStatusError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
             try
             {
@@ -107,7 +106,6 @@ namespace Hotel
                     var roomToUpdate = await context.HotelRooms.FindAsync(roomId);
                     if (roomToUpdate == null) { MessageBox.Show($"Кімнату з ID {roomId} не знайдено.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                    // (ЗМІНЕНО) Беремо КЛЮЧ ("доступна") замість ТЕКСТУ ("Available")
                     roomToUpdate.RoomStatus = cmbStatus.SelectedValue.ToString()!;
                     await context.SaveChangesAsync();
 
@@ -121,6 +119,7 @@ namespace Hotel
             }
         }
 
-        private Label CreateLabel(string text) => new Label { Text = text, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(5), Font = commonFont };
+        // (ЗМІНЕНО) Колір тексту Label
+        private Label CreateLabel(string text) => new Label { Text = text, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(5), Font = commonFont, ForeColor = ThemeManager.TextColor };
     }
 }

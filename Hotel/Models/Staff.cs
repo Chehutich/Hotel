@@ -14,4 +14,10 @@ public partial class Staff
     public string JobTitle { get; set; } = null!;
 
     public string StaffPhoneNumber { get; set; } = null!;
+
+    // --- (ОСЬ НОВІ ПОЛЯ, ЯКІ ПОТРІБНО ДОДАТИ) ---
+
+    public string? Username { get; set; }
+
+    public string? PasswordHash { get; set; }
 }

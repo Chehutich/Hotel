@@ -1,7 +1,7 @@
 ﻿using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic; // (ДОДАНО)
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,13 +15,10 @@ namespace Hotel
         private TextBox txtSearch;
         private ComboBox cmbSort;
         private Font commonFont = new Font("Segoe UI", 10F);
-
-        // (НОВЕ) Словник для сортування
         private Dictionary<string, string> roomSortOptions;
 
         public ListRoomsControl()
         {
-            // (НОВЕ) Ініціалізація словника сортування
             roomSortOptions = new Dictionary<string, string>
             {
                 { "ID_ASC", Strings.Sort_Room_ID_ASC },
@@ -40,7 +37,8 @@ namespace Hotel
                 Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(15)
+                Padding = new Padding(15),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var mainLayout = new TableLayoutPanel
@@ -61,19 +59,23 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont };
-            cmbSort = new ComboBox { Width = 220, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
-            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
-            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
+            // (ЗМІНЕНО) Кольори полів вводу
+            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            cmbSort = new ComboBox { Width = 220, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (ЗМІНЕНО) Прив'язка ComboBox до словника
+            // (ЗМІНЕНО) Кольори кнопок
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
             cmbSort.DataSource = new BindingSource(roomSortOptions, null);
             cmbSort.DisplayMember = "Value";
             cmbSort.ValueMember = "Key";
 
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0), ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(txtSearch);
-            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
+            // (ЗМІНЕНО) Колір тексту Label
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont, ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
             filterPanel.Controls.Add(btnReset);
@@ -84,11 +86,20 @@ namespace Hotel
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White,
+                BackgroundColor = ThemeManager.GridBackground, // (ЗМІНЕНО)
                 BorderStyle = BorderStyle.None,
                 Font = new Font("Segoe UI", 10F)
             };
+
+            // (ЗМІНЕНО) Кольори сітки
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = ThemeManager.GridHeaderForeColor;
+            dgv.DefaultCellStyle.BackColor = ThemeManager.InputBackground;
+            dgv.DefaultCellStyle.ForeColor = ThemeManager.InputForeColor;
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.RowHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
+
             dgv.RowTemplate.Height = 30;
 
             mainLayout.Controls.Add(filterPanel, 0, 0);
@@ -132,9 +143,6 @@ namespace Hotel
                         );
                     }
 
-                    // (ЗМІНЕНО) Switch тепер використовує КЛЮЧІ
-                    // (ПРИМІТКА) Логіка сортування за статусами залишилася залежною від рядків "доступна", "на ремонті"
-                    // Це тому, що ваші ключі в .resx не містять цих значень.
                     switch (sortBy)
                     {
                         case "ID_DESC": query = query.OrderByDescending(hr => hr.IdRooms); break;
@@ -171,7 +179,6 @@ namespace Hotel
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {
-            // (ЗМІНЕНО) Передаємо КЛЮЧ (SelectedValue)
             LoadRooms(txtSearch.Text, cmbSort.SelectedValue as string);
         }
 

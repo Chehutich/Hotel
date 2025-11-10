@@ -556,6 +556,105 @@ namespace Hotel {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Увійти.
+        /// </summary>
+        internal static string Login_Button {
+            get {
+                return ResourceManager.GetString("Login_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Не вдалося підключитися до бази даних:.
+        /// </summary>
+        internal static string Login_Error_Connection {
+            get {
+                return ResourceManager.GetString("Login_Error_Connection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Помилка підключення.
+        /// </summary>
+        internal static string Login_Error_ConnectionTitle {
+            get {
+                return ResourceManager.GetString("Login_Error_ConnectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Неправильне ім&apos;я користувача або пароль..
+        /// </summary>
+        internal static string Login_Error_Invalid {
+            get {
+                return ResourceManager.GetString("Login_Error_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Помилка входу.
+        /// </summary>
+        internal static string Login_Error_Title {
+            get {
+                return ResourceManager.GetString("Login_Error_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Пароль:.
+        /// </summary>
+        internal static string Login_Password {
+            get {
+                return ResourceManager.GetString("Login_Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Авторизація.
+        /// </summary>
+        internal static string Login_Title {
+            get {
+                return ResourceManager.GetString("Login_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Користувач:.
+        /// </summary>
+        internal static string Login_Username {
+            get {
+                return ResourceManager.GetString("Login_Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Будь ласка, введіть ім&apos;я користувача та пароль..
+        /// </summary>
+        internal static string Login_Validation_Empty {
+            get {
+                return ResourceManager.GetString("Login_Validation_Empty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ви точно бажаєте вийти із системи?.
+        /// </summary>
+        internal static string Logout_Confirm_Text {
+            get {
+                return ResourceManager.GetString("Logout_Confirm_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Вихід із системи.
+        /// </summary>
+        internal static string Logout_Confirm_Title {
+            get {
+                return ResourceManager.GetString("Logout_Confirm_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Налаштування мови буде застосовано після перезапуску..
         /// </summary>
         internal static string MsgLanguageRestart {
@@ -579,6 +678,33 @@ namespace Hotel {
         internal static string MsgNoDataForReport {
             get {
                 return ResourceManager.GetString("MsgNoDataForReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Адміністратор.
+        /// </summary>
+        internal static string Role_Administrator {
+            get {
+                return ResourceManager.GetString("Role_Administrator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Рецепціоніст.
+        /// </summary>
+        internal static string Role_Receptionist {
+            get {
+                return ResourceManager.GetString("Role_Receptionist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Невідома роль.
+        /// </summary>
+        internal static string Role_Unknown {
+            get {
+                return ResourceManager.GetString("Role_Unknown", resourceCulture);
             }
         }
         

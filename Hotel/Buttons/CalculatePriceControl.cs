@@ -15,17 +15,19 @@ namespace Hotel
         private DateTimePicker dtpCheckIn, dtpCheckOut;
         private GroupBox calcBox;
         private Font commonFont = new Font("Segoe UI", 11F);
+        private Font pickerFont = new Font("Segoe UI", 12F);
 
         public CalculatePriceControl()
         {
             calcBox = new GroupBox
             {
-                Text = Strings.CalculatePriceTitle, // (ЗМІНЕНО)
+                Text = Strings.CalculatePriceTitle,
                 Dock = DockStyle.None,
                 Width = 800,
                 Height = 480,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                Padding = new Padding(25)
+                Padding = new Padding(25),
+                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
             };
 
             var layoutPanel = new TableLayoutPanel
@@ -37,26 +39,45 @@ namespace Hotel
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            txtGuestId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            txtRoomId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            dtpCheckIn = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, Format = DateTimePickerFormat.Long };
-            dtpCheckOut = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, Format = DateTimePickerFormat.Long };
-            txtResult = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), ReadOnly = true, BackColor = Color.White, Font = commonFont };
+            // (ЗМІНЕНО) Кольори полів вводу
+            txtGuestId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            txtRoomId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelGuestID), 0, 0); // (ЗМІНЕНО)
+            // (ЗМІНЕНО) Кольори календаря
+            dtpCheckIn = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
+            dtpCheckIn.CalendarMonthBackground = ThemeManager.InputBackground;
+            dtpCheckIn.CalendarForeColor = ThemeManager.InputForeColor;
+            dtpCheckIn.CalendarTitleBackColor = ThemeManager.ButtonBackground;
+            dtpCheckIn.CalendarTitleForeColor = ThemeManager.ButtonForeColor;
+            dtpCheckIn.CalendarTrailingForeColor = Color.Gray;
+
+            dtpCheckOut = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
+            dtpCheckOut.CalendarMonthBackground = ThemeManager.InputBackground;
+            dtpCheckOut.CalendarForeColor = ThemeManager.InputForeColor;
+            dtpCheckOut.CalendarTitleBackColor = ThemeManager.ButtonBackground;
+            dtpCheckOut.CalendarTitleForeColor = ThemeManager.ButtonForeColor;
+            dtpCheckOut.CalendarTrailingForeColor = Color.Gray;
+
+            // (ЗМІНЕНО) Колір поля результату
+            txtResult = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), ReadOnly = true, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor, Font = commonFont };
+
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelGuestID), 0, 0);
             layoutPanel.Controls.Add(txtGuestId, 1, 0);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelRoomID), 0, 1); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelRoomID), 0, 1);
             layoutPanel.Controls.Add(txtRoomId, 1, 1);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelCheckIn), 0, 2); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelCheckIn), 0, 2);
             layoutPanel.Controls.Add(dtpCheckIn, 1, 2);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelCheckOut), 0, 3); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelCheckOut), 0, 3);
             layoutPanel.Controls.Add(dtpCheckOut, 1, 3);
-            layoutPanel.Controls.Add(CreateLabel(Strings.LabelResult), 0, 4); // (ЗМІНЕНО)
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelResult), 0, 4);
             layoutPanel.Controls.Add(txtResult, 1, 4);
 
             var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
-            var btnCalculate = new Button { Text = Strings.ButtonCalculate, Width = 140, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
-            var btnClear = new Button { Text = Strings.ButtonClear, Width = 130, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
+
+            // (ЗМІНЕНО) Кольори кнопок
+            var btnCalculate = new Button { Text = Strings.ButtonCalculate, Width = 140, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+            var btnClear = new Button { Text = Strings.ButtonClear, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
+
             buttonPanel.Controls.Add(btnCalculate);
             buttonPanel.Controls.Add(btnClear);
             layoutPanel.Controls.Add(buttonPanel, 1, 5);
@@ -91,7 +112,6 @@ namespace Hotel
             int guestId;
             int roomId;
 
-            // (ЗМІНЕНО)
             if (!int.TryParse(txtGuestId.Text, out guestId) || !int.TryParse(txtRoomId.Text, out roomId)) { MessageBox.Show(Strings.ValidationIdError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
             try
@@ -99,8 +119,6 @@ namespace Hotel
                 using (var context = new HotelDbContext())
                 {
                     var guest = await context.Guests.FindAsync(guestId);
-
-                    // (ПРИМІТКА) Ключа для "Гостя не знайдено" не було, залишаю ваш текст
                     if (guest == null) { MessageBox.Show($"Гостя з ID {guestId} не знайдено.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                     var lastNameParam = new MySqlParameter("p_name_guest", guest.GuestLastName);
@@ -121,11 +139,11 @@ namespace Hotel
             }
             catch (Exception ex)
             {
-                // (ЗМІНЕНО)
                 MessageBox.Show($"Помилка розрахунку: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private Label CreateLabel(string text) => new Label { Text = text, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(5), Font = commonFont };
+        // (ЗМІНЕНО) Колір тексту Label
+        private Label CreateLabel(string text) => new Label { Text = text, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(5), Font = commonFont, ForeColor = ThemeManager.TextColor };
     }
 }
