@@ -5,7 +5,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections.Generic;
+using System.Collections.Generic; // (ДОДАНО)
 using System.IO;
 using System.Globalization;
 
@@ -17,17 +17,29 @@ namespace Hotel
         private TextBox txtSearch;
         private ComboBox cmbSort;
         private GroupBox guestBox;
-        private Font commonFont = new Font("Segoe UI", 10F); // Шрифт для фільтрів
+        private Font commonFont = new Font("Segoe UI", 10F);
+
+        // (НОВЕ) Словник для сортування: Ключ (для коду), Значення (для користувача)
+        private Dictionary<string, string> guestSortOptions;
 
         public ListGuestsControl()
         {
+            // (НОВЕ) Ініціалізація словника сортування
+            guestSortOptions = new Dictionary<string, string>
+            {
+                { "LastName_ASC", Strings.Sort_Guest_LastName_ASC },
+                { "LastName_DESC", Strings.Sort_Guest_LastName_DESC },
+                { "ID_ASC", Strings.Sort_Guest_ID_ASC },
+                { "ID_DESC", Strings.Sort_Guest_ID_DESC }
+            };
+
             guestBox = new GroupBox
             {
-                Text = "Список зареєстрованих гостей",
+                Text = Strings.ListGuestsTitle,
                 Dock = DockStyle.None,
-                Width = 1100, // ЗБІЛЬШЕНО
+                Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(15)
             };
 
@@ -46,25 +58,23 @@ namespace Hotel
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = false,
                 AutoSize = true,
-                Padding = new Padding(0, 0, 0, 10) // Відступ знизу
+                Padding = new Padding(0, 0, 0, 10)
             };
 
-            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
-            cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont }; // ЗБІЛЬШЕНО
-            var btnSearch = new Button { Text = "Пошук", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
-            var btnReset = new Button { Text = "Скинути", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШEНО
-            var btnReport = new Button { Text = "Звіт", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
+            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont };
+            cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
+            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
+            var btnReport = new Button { Text = Strings.ButtonReport, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
 
-            cmbSort.Items.AddRange(new string[] {
-            "За прізвищем (А-Я)",
-            "За прізвищем (Я-А)",
-            "За ID (зростання)",
-            "За ID (спадання)"
-            });
+            // (ЗМІНЕНО) Прив'язка ComboBox до словника
+            cmbSort.DataSource = new BindingSource(guestSortOptions, null);
+            cmbSort.DisplayMember = "Value"; // Показуємо користувачу локалізований текст
+            cmbSort.ValueMember = "Key";     // В коді використовуємо ключ (напр. "LastName_ASC")
 
-            filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
             filterPanel.Controls.Add(txtSearch);
-            filterPanel.Controls.Add(new Label { Text = "Сортувати:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
             filterPanel.Controls.Add(btnReset);
@@ -78,10 +88,10 @@ namespace Hotel
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
-                Font = new Font("Segoe UI", 10F) // ЗБІЛЬШЕНО шрифт таблиці
+                Font = new Font("Segoe UI", 10F)
             };
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold); // ЗБІЛЬШЕНО заголовки
-            dgv.RowTemplate.Height = 30; // ЗБІЛЬШЕНО висоту рядків
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.RowTemplate.Height = 30;
 
             mainLayout.Controls.Add(filterPanel, 0, 0);
             mainLayout.Controls.Add(dgv, 0, 1);
@@ -98,9 +108,9 @@ namespace Hotel
 
         private void CenterControls()
         {
-            guestBox.Height = this.ClientSize.Height - 10; // Невеликий відступ
+            guestBox.Height = this.ClientSize.Height - 10;
             guestBox.Left = (this.ClientSize.Width - guestBox.Width) / 2;
-            guestBox.Top = 5; // Відступ зверху
+            guestBox.Top = 5;
         }
 
         private void ListGuestsControl_Load(object? sender, EventArgs e)
@@ -126,37 +136,39 @@ namespace Hotel
                         );
                     }
 
+                    // (ЗМІНЕНО) Switch тепер використовує КЛЮЧІ, а не текст
                     switch (sortBy)
                     {
-                        case "За прізвищем (А-Я)": query = query.OrderBy(g => g.GuestLastName); break;
-                        case "За прізвищем (Я-А)": query = query.OrderByDescending(g => g.GuestLastName); break;
-                        case "За ID (зростання)": query = query.OrderBy(g => g.IdGuest); break;
-                        case "За ID (спадання)": query = query.OrderByDescending(g => g.IdGuest); break;
+                        case "LastName_ASC": query = query.OrderBy(g => g.GuestLastName); break;
+                        case "LastName_DESC": query = query.OrderByDescending(g => g.GuestLastName); break;
+                        case "ID_ASC": query = query.OrderBy(g => g.IdGuest); break;
+                        case "ID_DESC": query = query.OrderByDescending(g => g.IdGuest); break;
                         default: query = query.OrderBy(g => g.IdGuest); break;
                     }
 
                     dgv.DataSource = await query.ToListAsync();
 
-                    if (dgv.Columns["IdGuest"] != null) dgv.Columns["IdGuest"].HeaderText = "ID";
-                    if (dgv.Columns["GuestFirstName"] != null) dgv.Columns["GuestFirstName"].HeaderText = "Ім'я";
-                    if (dgv.Columns["GuestLastName"] != null) dgv.Columns["GuestLastName"].HeaderText = "Прізвище";
-                    if (dgv.Columns["PhoneNumber"] != null) dgv.Columns["PhoneNumber"].HeaderText = "Телефон";
-                    if (dgv.Columns["DateOfBirth"] != null) dgv.Columns["DateOfBirth"].HeaderText = "Дата народження";
-                    if (dgv.Columns["PassportSeries"] != null) dgv.Columns["PassportSeries"].HeaderText = "Паспорт";
-                    if (dgv.Columns["IsRegularGuest"] != null) dgv.Columns["IsRegularGuest"].HeaderText = "Постійний клієнт";
+                    if (dgv.Columns["IdGuest"] != null) dgv.Columns["IdGuest"].HeaderText = Strings.Col_ID;
+                    if (dgv.Columns["GuestFirstName"] != null) dgv.Columns["GuestFirstName"].HeaderText = Strings.Col_FirstName;
+                    if (dgv.Columns["GuestLastName"] != null) dgv.Columns["GuestLastName"].HeaderText = Strings.Col_LastName;
+                    if (dgv.Columns["PhoneNumber"] != null) dgv.Columns["PhoneNumber"].HeaderText = Strings.Col_Phone;
+                    if (dgv.Columns["DateOfBirth"] != null) dgv.Columns["DateOfBirth"].HeaderText = Strings.Col_BirthDate;
+                    if (dgv.Columns["PassportSeries"] != null) dgv.Columns["PassportSeries"].HeaderText = Strings.Col_Passport;
+                    if (dgv.Columns["IsRegularGuest"] != null) dgv.Columns["IsRegularGuest"].HeaderText = Strings.Col_IsRegular;
                     if (dgv.Columns["PresenceOfChild"] != null) dgv.Columns["PresenceOfChild"].Visible = false;
                     if (dgv.Columns["Reservations"] != null) dgv.Columns["Reservations"].Visible = false;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка завантаження даних: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Помилка завантаження даних: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {
-            LoadGuests(txtSearch.Text, cmbSort.SelectedItem as string);
+            // (ЗМІНЕНО) Передаємо КЛЮЧ (SelectedValue) замість тексту (SelectedItem)
+            LoadGuests(txtSearch.Text, cmbSort.SelectedValue as string);
         }
 
         private void BtnReset_Click(object? sender, EventArgs e)
@@ -168,11 +180,12 @@ namespace Hotel
 
         private void BtnReport_Click(object? sender, EventArgs e)
         {
+            // (Код не змінено, він був коректним)
             var originalGuestList = dgv.DataSource as List<Guest>;
 
             if (originalGuestList == null || !originalGuestList.Any())
             {
-                MessageBox.Show("Немає даних для генерації звіту.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.MsgNoDataForReport, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -193,7 +206,7 @@ namespace Hotel
             {
                 Hotel.ClassSerializare.SerializeToXml<List<GuestReportDto>>(ref guestsToSerialize, fileName);
                 FormReport frmReport = new FormReport();
-                frmReport.Show(); // Відкриваємо немодально
+                frmReport.Show();
             }
             catch (Exception ex)
             {

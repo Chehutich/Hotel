@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System;
 using System.Linq;
+using System.Collections.Generic; // (ДОДАНО)
 
 namespace Hotel
 {
@@ -13,15 +14,28 @@ namespace Hotel
         private GroupBox statusBox;
         private Font commonFont = new Font("Segoe UI", 11F);
 
+        // (НОВЕ) Словник для статусів
+        private Dictionary<string, string> roomStatusOptions;
+
         public UpdateRoomStatusControl()
         {
+            // (НОВЕ) Ініціалізація словника статусів
+            // Ключ - це значення, яке йде в БД (як у вашому БД.txt)
+            // Значення - це те, що бачить користувач (з .resx)
+            roomStatusOptions = new Dictionary<string, string>
+            {
+                { "доступна", Strings.Status_Available },
+                { "на прибиранні", Strings.Status_Cleaning },
+                { "на ремонті", Strings.Status_Repair }
+            };
+
             statusBox = new GroupBox
             {
-                Text = "Оновлення статусу кімнати",
+                Text = Strings.UpdateRoomStatusTitle,
                 Dock = DockStyle.None,
-                Width = 800, // ЗБІЛЬШЕНО
-                Height = 300, // ЗБІЛЬШЕНО
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
+                Width = 800,
+                Height = 300,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(25)
             };
 
@@ -31,21 +45,25 @@ namespace Hotel
                 ColumnCount = 2,
                 RowCount = 3
             };
-            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F)); // ЗБІЛЬШЕНО
+            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
             txtRoomId = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
             cmbStatus = new ComboBox { Dock = DockStyle.Fill, Margin = new Padding(5), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
-            cmbStatus.Items.AddRange(new string[] { "доступна", "на прибиранні", "на ремонті" });
 
-            layoutPanel.Controls.Add(CreateLabel("Номер кімнати:"), 0, 0);
+            // (ЗМІНЕНО) Прив'язка ComboBox до словника
+            cmbStatus.DataSource = new BindingSource(roomStatusOptions, null);
+            cmbStatus.DisplayMember = "Value"; // "Available"
+            cmbStatus.ValueMember = "Key";     // "доступна"
+
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelRoomID), 0, 0);
             layoutPanel.Controls.Add(txtRoomId, 1, 0);
-            layoutPanel.Controls.Add(CreateLabel("Новий статус:"), 0, 1);
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelNewStatus), 0, 1);
             layoutPanel.Controls.Add(cmbStatus, 1, 1);
 
             var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
-            var btnSave = new Button { Text = "Зберегти", Width = 130, Height = 40, Font = commonFont }; // ЗБІЛЬШЕНО
-            var btnCancel = new Button { Text = "Скасувати", Width = 130, Height = 40, Font = commonFont }; // ЗБІЛЬШЕНО
+            var btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont };
+            var btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont };
             buttonPanel.Controls.Add(btnSave);
             buttonPanel.Controls.Add(btnCancel);
             layoutPanel.Controls.Add(buttonPanel, 1, 2);
@@ -79,8 +97,8 @@ namespace Hotel
 
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
-            if (!int.TryParse(txtRoomId.Text, out int roomId)) { MessageBox.Show("ID кімнати має бути числом.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            if (cmbStatus.SelectedItem == null) { MessageBox.Show("Будь ласка, виберіть новий статус.", "Помилка вводу", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (!int.TryParse(txtRoomId.Text, out int roomId)) { MessageBox.Show(Strings.ValidationIdError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (cmbStatus.SelectedValue == null) { MessageBox.Show(Strings.ValidationStatusError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } // (ЗМІНЕНО) SelectedValue
 
             try
             {
@@ -89,16 +107,17 @@ namespace Hotel
                     var roomToUpdate = await context.HotelRooms.FindAsync(roomId);
                     if (roomToUpdate == null) { MessageBox.Show($"Кімнату з ID {roomId} не знайдено.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                    roomToUpdate.RoomStatus = cmbStatus.SelectedItem.ToString()!;
+                    // (ЗМІНЕНО) Беремо КЛЮЧ ("доступна") замість ТЕКСТУ ("Available")
+                    roomToUpdate.RoomStatus = cmbStatus.SelectedValue.ToString()!;
                     await context.SaveChangesAsync();
 
-                    MessageBox.Show($"Статус кімнати {roomId} успішно оновлено!", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Статус кімнати {roomId} успішно оновлено!", Strings.UpdateRoomStatusTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка оновлення статусу: {ex.Message}", "Помилка бази даних", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Помилка оновлення статусу: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

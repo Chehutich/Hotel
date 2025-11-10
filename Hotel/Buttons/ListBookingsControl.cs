@@ -1,6 +1,7 @@
 ﻿using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic; // (ДОДАНО)
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,15 +16,26 @@ namespace Hotel
         private GroupBox bookingBox;
         private Font commonFont = new Font("Segoe UI", 10F);
 
+        // (НОВЕ) Словник для сортування
+        private Dictionary<string, string> bookingSortOptions;
+
         public ListBookingsControl()
         {
+            // (НОВЕ) Ініціалізація словника сортування
+            bookingSortOptions = new Dictionary<string, string>
+            {
+                { "Date_DESC", Strings.Sort_Booking_Date_DESC },
+                { "Date_ASC", Strings.Sort_Booking_Date_ASC },
+                { "ID_ASC", Strings.Sort_Booking_ID }
+            };
+
             bookingBox = new GroupBox
             {
-                Text = "Список бронювань",
+                Text = Strings.ListBookingsTitle,
                 Dock = DockStyle.None,
-                Width = 1100, // ЗБІЛЬШЕНО
+                Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(15)
             };
 
@@ -45,20 +57,19 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
-            cmbSort = new ComboBox { Width = 200, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont }; // ЗБІЛЬШЕНО
-            var btnSearch = new Button { Text = "Пошук", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
-            var btnReset = new Button { Text = "Скинути", Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont }; // ЗБІЛЬШЕНО
+            txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont };
+            cmbSort = new ComboBox { Width = 200, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont };
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
+            var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont };
 
-            cmbSort.Items.AddRange(new string[] {
-            "За датою заїзду (новіші)",
-            "За датою заїзду (старіші)",
-            "За ID бронювання"
-            });
+            // (ЗМІНЕНО) Прив'язка ComboBox до словника
+            cmbSort.DataSource = new BindingSource(bookingSortOptions, null);
+            cmbSort.DisplayMember = "Value";
+            cmbSort.ValueMember = "Key";
 
-            filterPanel.Controls.Add(new Label { Text = "Пошук:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0) });
             filterPanel.Controls.Add(txtSearch);
-            filterPanel.Controls.Add(new Label { Text = "Сортувати:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
             filterPanel.Controls.Add(btnReset);
@@ -71,10 +82,10 @@ namespace Hotel
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
-                Font = new Font("Segoe UI", 10F) // ЗБІЛЬШЕНО
+                Font = new Font("Segoe UI", 10F)
             };
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold); // ЗБІЛЬШЕНО
-            dgv.RowTemplate.Height = 30; // ЗБІЛЬШЕНО
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.RowTemplate.Height = 30;
 
             mainLayout.Controls.Add(filterPanel, 0, 0);
             mainLayout.Controls.Add(dgv, 0, 1);
@@ -120,11 +131,12 @@ namespace Hotel
                         );
                     }
 
+                    // (ЗМІНЕНО) Switch тепер використовує КЛЮЧІ
                     switch (sortBy)
                     {
-                        case "За датою заїзду (новіші)": query = query.OrderByDescending(r => r.CheckInDate); break;
-                        case "За датою заїзду (старіші)": query = query.OrderBy(r => r.CheckInDate); break;
-                        case "За ID бронювання": query = query.OrderBy(r => r.IdBooking); break;
+                        case "Date_DESC": query = query.OrderByDescending(r => r.CheckInDate); break;
+                        case "Date_ASC": query = query.OrderBy(r => r.CheckInDate); break;
+                        case "ID_ASC": query = query.OrderBy(r => r.IdBooking); break;
                         default: query = query.OrderByDescending(r => r.CheckInDate); break;
                     }
 
@@ -142,23 +154,24 @@ namespace Hotel
 
                     dgv.DataSource = bookings;
 
-                    dgv.Columns["BookingId"].HeaderText = "ID Бронювання";
-                    dgv.Columns["GuestName"].HeaderText = "Ім'я гостя";
-                    dgv.Columns["RoomId"].HeaderText = "Номер кімнати";
-                    dgv.Columns["CheckIn"].HeaderText = "Дата заїзду";
-                    dgv.Columns["CheckOut"].HeaderText = "Дата виїзду";
-                    dgv.Columns["Status"].HeaderText = "Статус";
+                    dgv.Columns["BookingId"].HeaderText = Strings.Col_BookingID;
+                    dgv.Columns["GuestName"].HeaderText = Strings.Col_GuestName;
+                    dgv.Columns["RoomId"].HeaderText = Strings.Col_RoomID;
+                    dgv.Columns["CheckIn"].HeaderText = Strings.Col_CheckIn;
+                    dgv.Columns["CheckOut"].HeaderText = Strings.Col_CheckOut;
+                    dgv.Columns["Status"].HeaderText = Strings.Col_Status;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка завантаження бронювань: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Помилка завантаження бронювань: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {
-            LoadBookings(txtSearch.Text, cmbSort.SelectedItem as string);
+            // (ЗМІНЕНО) Передаємо КЛЮЧ (SelectedValue)
+            LoadBookings(txtSearch.Text, cmbSort.SelectedValue as string);
         }
 
         private void BtnReset_Click(object? sender, EventArgs e)

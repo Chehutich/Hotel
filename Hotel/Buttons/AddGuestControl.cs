@@ -19,11 +19,11 @@ namespace Hotel
         {
             guestBox = new GroupBox
             {
-                Text = "Введіть дані гостя",
+                Text = Strings.AddGuestTitle, // (ЗМІНЕНО)
                 Dock = DockStyle.None,
-                Width = 800, // ЗБІЛЬШЕНО
-                Height = 480, // ЗБІЛЬШЕНО
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
+                Width = 800,
+                Height = 480,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(25)
             };
 
@@ -34,7 +34,7 @@ namespace Hotel
                 RowCount = 6
             };
 
-            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F)); // ЗБІЛЬШЕНО
+            layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
             txtFirstName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
@@ -42,20 +42,21 @@ namespace Hotel
             txtPhoneNumber = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
             dtpDateOfBirth = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, Format = DateTimePickerFormat.Long };
             txtPassport = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont };
-            btnSave = new Button { Text = "Зберегти", Width = 130, Height = 40, Font = commonFont }; // ЗБІЛЬШЕНО
-            btnCancel = new Button { Text = "Скасувати", Width = 130, Height = 40, Font = commonFont }; // ЗБІЛЬШЕНО
 
-            layoutPanel.Controls.Add(CreateLabel("Ім'я:"), 0, 0);
+            btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
+            btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont }; // (ЗМІНЕНО)
+
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelFirstName), 0, 0); // (ЗМІНЕНО)
             layoutPanel.Controls.Add(txtFirstName, 1, 0);
-            layoutPanel.Controls.Add(CreateLabel("Прізвище:"), 0, 1);
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelLastName), 0, 1); // (ЗМІНЕНО)
             layoutPanel.Controls.Add(txtLastName, 1, 1);
-            layoutPanel.Controls.Add(CreateLabel("Номер телефону:"), 0, 2);
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPhoneNumber), 0, 2); // (ЗМІНЕНО)
             layoutPanel.Controls.Add(txtPhoneNumber, 1, 2);
-            layoutPanel.Controls.Add(CreateLabel("Дата народження:"), 0, 3);
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelDateOfBirth), 0, 3); // (ЗМІНЕНО)
             layoutPanel.Controls.Add(dtpDateOfBirth, 1, 3);
-            layoutPanel.Controls.Add(CreateLabel("Серія паспорту:"), 0, 4);
+            layoutPanel.Controls.Add(CreateLabel(Strings.LabelPassport), 0, 4); // (ЗМІНЕНО)
             layoutPanel.Controls.Add(txtPassport, 1, 4);
-            var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) }; // Додано відступ
+            var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.LeftToRight, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
             buttonPanel.Controls.Add(btnSave);
             buttonPanel.Controls.Add(btnCancel);
             layoutPanel.Controls.Add(buttonPanel, 1, 5);
@@ -78,11 +79,12 @@ namespace Hotel
 
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text)) { MessageBox.Show("Ім'я та Прізвище є обов'язковими полями.", "Помилка валідації", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            // (ЗМІНЕНО) Використання ключів валідації
+            if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text)) { MessageBox.Show(Strings.ValidationNamesRequired, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             string phoneNumber = txtPhoneNumber.Text;
-            if (!string.IsNullOrWhiteSpace(phoneNumber)) { string phoneRegexPattern = @"^(\+380\d{9}|0\d{9})$"; if (!Regex.IsMatch(phoneNumber, phoneRegexPattern)) { MessageBox.Show("Номер телефону введено неправильно.\nДопустимі формати: +380XXXXXXXXX (13 цифр) або 0XXXXXXXXX (10 цифр).", "Помилка валідації", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
+            if (!string.IsNullOrWhiteSpace(phoneNumber)) { string phoneRegexPattern = @"^(\+380\d{9}|0\d{9})$"; if (!Regex.IsMatch(phoneNumber, phoneRegexPattern)) { MessageBox.Show(Strings.ValidationPhoneFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
             string passport = txtPassport.Text;
-            if (!string.IsNullOrWhiteSpace(passport)) { string passportRegexPattern = @"^(\d{9}|[A-Z]{2}\d{6})$"; if (!Regex.IsMatch(passport, passportRegexPattern)) { MessageBox.Show("Серію паспорту введено неправильно.\nДопустимі формати: 9 цифр (ID-картка) або 2 великі латинські літери та 6 цифр (паспорт-книжечка).", "Помилка валідації", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
+            if (!string.IsNullOrWhiteSpace(passport)) { string passportRegexPattern = @"^(\d{9}|[A-Z]{2}\d{6})$"; if (!Regex.IsMatch(passport, passportRegexPattern)) { MessageBox.Show(Strings.ValidationPassportFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
 
             try
             {
@@ -106,13 +108,16 @@ namespace Hotel
                     newGuest.PresenceOfChild = childInfo;
                     context.Guests.Add(newGuest);
                     await context.SaveChangesAsync();
-                    MessageBox.Show("Гостя успішно додано!", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // (ПРИМІТКА) Ключа для "Успіх" не було, залишаю ваш текст
+                    MessageBox.Show("Гостя успішно додано!", Strings.AddGuestTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка збереження гостя: {ex.Message}\n\n{ex.InnerException?.Message}", "Помилка бази даних", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // (ЗМІНЕНО)
+                MessageBox.Show($"Помилка збереження гостя: {ex.Message}\n\n{ex.InnerException?.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -138,7 +143,7 @@ namespace Hotel
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleRight,
                 Margin = new Padding(5),
-                Font = commonFont // Використовуємо загальний шрифт
+                Font = commonFont
             };
         }
     }

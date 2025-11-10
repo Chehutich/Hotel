@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBooking" xml:space="preserve">
+    <value>Add Booking</value>
+  </data>
+  <data name="AddBookingTitle" xml:space="preserve">
+    <value>Create New Booking</value>
+  </data>
+  <data name="AddGuest" xml:space="preserve">
+    <value>Add Guest</value>
+  </data>
+  <data name="AddGuestTitle" xml:space="preserve">
+    <value>Enter Guest Details</value>
+  </data>
+  <data name="AppTitle" xml:space="preserve">
+    <value>Hotel Management System</value>
+  </data>
+  <data name="ButtonCalculate" xml:space="preserve">
+    <value>Calculate</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ButtonClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ButtonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="CalculatePrice" xml:space="preserve">
+    <value>Calculate Price</value>
+  </data>
+  <data name="CalculatePriceTitle" xml:space="preserve">
+    <value>Calculate Stay Price</value>
+  </data>
+  <data name="CheckAvailability" xml:space="preserve">
+    <value>Check Availability</value>
+  </data>
+  <data name="CheckAvailabilityTitle" xml:space="preserve">
+    <value>Check Room Availability</value>
+  </data>
+  <data name="Col_BirthDate" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
+  <data name="Col_BookingID" xml:space="preserve">
+    <value>Booking ID</value>
+  </data>
+  <data name="Col_CheckIn" xml:space="preserve">
+    <value>Check-in</value>
+  </data>
+  <data name="Col_CheckOut" xml:space="preserve">
+    <value>Check-out</value>
+  </data>
+  <data name="Col_FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="Col_GuestName" xml:space="preserve">
+    <value>Guest Name</value>
+  </data>
+  <data name="Col_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Col_IsRegular" xml:space="preserve">
+    <value>Regular Guest</value>
+  </data>
+  <data name="Col_LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="Col_Passport" xml:space="preserve">
+    <value>Passport</value>
+  </data>
+  <data name="Col_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Col_RoomID" xml:space="preserve">
+    <value>Room ID</value>
+  </data>
+  <data name="Col_RoomType" xml:space="preserve">
+    <value>Room Type</value>
+  </data>
+  <data name="Col_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="ErrorDBTitle" xml:space="preserve">
+    <value>Database Error</value>
+  </data>
+  <data name="LabelBookingStatus" xml:space="preserve">
+    <value>Booking Status:</value>
+  </data>
+  <data name="LabelCheckIn" xml:space="preserve">
+    <value>Check-in Date:</value>
+  </data>
+  <data name="LabelCheckOut" xml:space="preserve">
+    <value>Check-out Date:</value>
+  </data>
+  <data name="LabelDateOfBirth" xml:space="preserve">
+    <value>Date of Birth:</value>
+  </data>
+  <data name="LabelFirstName" xml:space="preserve">
+    <value>First Name:</value>
+  </data>
+  <data name="LabelFrom" xml:space="preserve">
+    <value>From:</value>
+  </data>
+  <data name="LabelGuestID" xml:space="preserve">
+    <value>Guest ID:</value>
+  </data>
+  <data name="LabelLastName" xml:space="preserve">
+    <value>Last Name:</value>
+  </data>
+  <data name="LabelNewStatus" xml:space="preserve">
+    <value>New Status:</value>
+  </data>
+  <data name="LabelPassport" xml:space="preserve">
+    <value>Passport ID:</value>
+  </data>
+  <data name="LabelPhoneNumber" xml:space="preserve">
+    <value>Phone Number:</value>
+  </data>
+  <data name="LabelResult" xml:space="preserve">
+    <value>Result (UAH):</value>
+  </data>
+  <data name="LabelRoomID" xml:space="preserve">
+    <value>Room ID:</value>
+  </data>
+  <data name="LabelSearch" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="LabelSort" xml:space="preserve">
+    <value>Sort by:</value>
+  </data>
+  <data name="LabelTo" xml:space="preserve">
+    <value>To:</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="ListBookings" xml:space="preserve">
+    <value>Booking List</value>
+  </data>
+  <data name="ListBookingsTitle" xml:space="preserve">
+    <value>Booking List</value>
+  </data>
+  <data name="ListGuests" xml:space="preserve">
+    <value>Guest List</value>
+  </data>
+  <data name="ListGuestsTitle" xml:space="preserve">
+    <value>Registered Guest List</value>
+  </data>
+  <data name="ListRooms" xml:space="preserve">
+    <value>Room List</value>
+  </data>
+  <data name="ListRoomsTitle" xml:space="preserve">
+    <value>Hotel Room List</value>
+  </data>
+  <data name="MsgLanguageRestart" xml:space="preserve">
+    <value>Language settings will be applied after restart.</value>
+  </data>
+  <data name="MsgLanguageTitle" xml:space="preserve">
+    <value>Language Change</value>
+  </data>
+  <data name="MsgNoDataForReport" xml:space="preserve">
+    <value>No data to generate report.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Sort_Booking_Date_ASC" xml:space="preserve">
+    <value>By Check-in Date (Older first)</value>
+  </data>
+  <data name="Sort_Booking_Date_DESC" xml:space="preserve">
+    <value>By Check-in Date (Newer first)</value>
+  </data>
+  <data name="Sort_Booking_ID" xml:space="preserve">
+    <value>By Booking ID</value>
+  </data>
+  <data name="Sort_Guest_ID_ASC" xml:space="preserve">
+    <value>By ID (Ascending)</value>
+  </data>
+  <data name="Sort_Guest_ID_DESC" xml:space="preserve">
+    <value>By ID (Descending)</value>
+  </data>
+  <data name="Sort_Guest_LastName_ASC" xml:space="preserve">
+    <value>By Last Name (A-Z)</value>
+  </data>
+  <data name="Sort_Guest_LastName_DESC" xml:space="preserve">
+    <value>By Last Name (Z-A)</value>
+  </data>
+  <data name="Sort_Room_ID_ASC" xml:space="preserve">
+    <value>By Number (Ascending)</value>
+  </data>
+  <data name="Sort_Room_ID_DESC" xml:space="preserve">
+    <value>By Number (Descending)</value>
+  </data>
+  <data name="Sort_Room_Status_Available" xml:space="preserve">
+    <value>By Status (Available first)</value>
+  </data>
+  <data name="Sort_Room_Status_Cleaning" xml:space="preserve">
+    <value>By Status (Cleaning first)</value>
+  </data>
+  <data name="Sort_Room_Status_Repair" xml:space="preserve">
+    <value>By Status (Repair first)</value>
+  </data>
+  <data name="Sort_Room_Type_ASC" xml:space="preserve">
+    <value>By Type (A-Z)</value>
+  </data>
+  <data name="Sort_Room_Type_DESC" xml:space="preserve">
+    <value>By Type (Z-A)</value>
+  </data>
+  <data name="Status_Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="Status_Booking_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Status_Booking_Confirmed" xml:space="preserve">
+    <value>Confirmed</value>
+  </data>
+  <data name="Status_Cleaning" xml:space="preserve">
+    <value>Cleaning</value>
+  </data>
+  <data name="Status_Repair" xml:space="preserve">
+    <value>Under Repair</value>
+  </data>
+  <data name="Ukrainian" xml:space="preserve">
+    <value>Ukrainian</value>
+  </data>
+  <data name="UpdateRoomStatus" xml:space="preserve">
+    <value>Update Room Status</value>
+  </data>
+  <data name="UpdateRoomStatusTitle" xml:space="preserve">
+    <value>Update Room Status</value>
+  </data>
+  <data name="ValidationDateError" xml:space="preserve">
+    <value>Check-out date must be later than check-in date.</value>
+  </data>
+  <data name="ValidationIdError" xml:space="preserve">
+    <value>Guest ID and Room ID must be numbers.</value>
+  </data>
+  <data name="ValidationNamesRequired" xml:space="preserve">
+    <value>First Name and Last Name are required fields.</value>
+  </data>
+  <data name="ValidationPassportFormat" xml:space="preserve">
+    <value>Invalid passport format. Allowed: 9 digits (ID) or 2 letters and 6 digits (booklet).</value>
+  </data>
+  <data name="ValidationPhoneFormat" xml:space="preserve">
+    <value>Invalid phone number format. Allowed: +380... (13) or 0... (10).</value>
+  </data>
+  <data name="ValidationStatusError" xml:space="preserve">
+    <value>Please select a status.</value>
+  </data>
+  <data name="ValidationTitle" xml:space="preserve">
+    <value>Validation Error</value>
+  </data>
+</root>

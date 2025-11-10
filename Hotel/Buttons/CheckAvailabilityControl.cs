@@ -19,11 +19,11 @@ namespace Hotel
         {
             availabilityBox = new GroupBox
             {
-                Text = "Перевірка доступних номерів",
+                Text = Strings.CheckAvailabilityTitle, // (ЗМІНЕНО)
                 Dock = DockStyle.None,
-                Width = 1100, // ЗБІЛЬШЕНО
+                Width = 1100,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold), // ЗБІЛЬШЕНО
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(15)
             };
 
@@ -45,13 +45,13 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            dtpCheckIn = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) }; // ЗБІЛЬШЕНО
-            dtpCheckOut = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) }; // ЗБІЛЬШЕНО
-            var btnSearch = new Button { Text = "Пошук", Size = new Size(100, 35), Font = commonFont, Margin = new Padding(10, 0, 0, 0) }; // ЗБІЛЬШЕНО
+            dtpCheckIn = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) };
+            dtpCheckOut = new DateTimePicker { Width = 150, Font = commonFont, Margin = new Padding(3) };
+            var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Font = commonFont, Margin = new Padding(10, 0, 0, 0) }; // (ЗМІНЕНО)
 
-            filterPanel.Controls.Add(new Label { Text = "З:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5, 8, 5, 0), Font = commonFont });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelFrom, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5, 8, 5, 0), Font = commonFont }); // (ЗМІНЕНО)
             filterPanel.Controls.Add(dtpCheckIn);
-            filterPanel.Controls.Add(new Label { Text = "По:", AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 8, 5, 0), Font = commonFont });
+            filterPanel.Controls.Add(new Label { Text = Strings.LabelTo, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 8, 5, 0), Font = commonFont }); // (ЗМІНЕНО)
             filterPanel.Controls.Add(dtpCheckOut);
             filterPanel.Controls.Add(btnSearch);
 
@@ -63,10 +63,10 @@ namespace Hotel
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
-                Font = new Font("Segoe UI", 10F) // ЗБІЛЬШЕНО
+                Font = new Font("Segoe UI", 10F)
             };
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold); // ЗБІЛЬШЕНО
-            dgv.RowTemplate.Height = 30; // ЗБІЛЬШЕНО
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            dgv.RowTemplate.Height = 30;
 
             mainLayoutPanel.Controls.Add(filterPanel, 0, 0);
             mainLayoutPanel.Controls.Add(dgv, 0, 1);
@@ -95,7 +95,8 @@ namespace Hotel
         {
             if (dtpCheckOut.Value <= dtpCheckIn.Value)
             {
-                MessageBox.Show("Дата виїзду повинна бути пізніше дати заїзду.", "Помилка дати", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // (ЗМІНЕНО)
+                MessageBox.Show(Strings.ValidationDateError, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             await LoadAvailableRooms(DateOnly.FromDateTime(dtpCheckIn.Value), DateOnly.FromDateTime(dtpCheckOut.Value));
@@ -133,14 +134,16 @@ namespace Hotel
 
                     dgv.DataSource = roomsToShow;
 
-                    dgv.Columns["RoomId"].HeaderText = "Номер кімнати";
-                    dgv.Columns["RoomType"].HeaderText = "Тип кімнати";
-                    dgv.Columns["Status"].HeaderText = "Статус";
+                    // (ЗМІНЕНО) Локалізація заголовків
+                    dgv.Columns["RoomId"].HeaderText = Strings.Col_RoomID;
+                    dgv.Columns["RoomType"].HeaderText = Strings.Col_RoomType;
+                    dgv.Columns["Status"].HeaderText = Strings.Col_Status;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка завантаження кімнат: {ex.Message}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // (ЗМІНЕНО)
+                MessageBox.Show($"Помилка завантаження кімнат: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using FastReport;
 using System.IO;
 using Hotel.Models;
-using System.Reflection; 
+using System.Reflection;
 
 namespace Hotel
 {
@@ -29,7 +29,7 @@ namespace Hotel
 
         private void FormReport_Load(object sender, EventArgs e)
         {
-            this.Text = "Генерація звіту...";
+            this.Text = Strings.ButtonReport; // (ЗМІНЕНО)
 
             string dataFileName = "guests_report.xml";
             string reportFileName = "GuestReport.frx";
@@ -38,13 +38,15 @@ namespace Hotel
             {
                 if (!File.Exists(reportFileName))
                 {
-                    MessageBox.Show($"Файл шаблону звіту не знайдено: {reportFileName}", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // (ЗМІНЕНО)
+                    MessageBox.Show($"Файл шаблону звіту не знайдено: {reportFileName}", Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                     return;
                 }
                 if (!File.Exists(dataFileName))
                 {
-                    MessageBox.Show($"Файл даних XML не знайдено: {dataFileName}.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // (ЗМІНЕНО)
+                    MessageBox.Show($"Файл даних XML не знайдено: {dataFileName}.", Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                     return;
                 }
@@ -63,7 +65,8 @@ namespace Hotel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Помилка завантаження або відображення звіту: {ex.Message}\n\n{ex.InnerException?.Message}", "Помилка звіту", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // (ЗМІНЕНО)
+                MessageBox.Show($"Помилка завантаження або відображення звіту: {ex.Message}\n\n{ex.InnerException?.Message}", Strings.ButtonReport, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
             }
         }
