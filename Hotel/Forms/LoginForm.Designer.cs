@@ -1,4 +1,6 @@
-﻿namespace Hotel
+﻿using Hotel.Localization;
+
+namespace Hotel
 {
     partial class LoginForm
     {

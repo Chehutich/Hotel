@@ -11,6 +11,8 @@ using FastReport;
 using System.IO;
 using Hotel.Models;
 using System.Reflection;
+using Hotel.Utils;
+using Hotel.Localization;
 
 namespace Hotel
 {
@@ -51,7 +53,7 @@ namespace Hotel
                     return;
                 }
 
-                Hotel.ClassSerializare.DeserializeFromXml<List<GuestReportDto>>(ref listGuests, dataFileName);
+                ClassSerializare.DeserializeFromXml<List<GuestReportDto>>(ref listGuests, dataFileName);
 
                 DataTable guestTable = ToDataTable(listGuests);
                 guestTable.TableName = "GuestReportDto";

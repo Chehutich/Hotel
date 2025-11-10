@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Hotel.Localization;
 
 namespace Hotel
 {

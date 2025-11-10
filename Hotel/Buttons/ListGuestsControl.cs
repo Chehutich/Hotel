@@ -1,5 +1,4 @@
-﻿using Hotel;
-using Hotel.Models;
+﻿using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Drawing;
@@ -8,6 +7,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using Hotel.Utils;
+using Hotel.Localization;
 
 namespace Hotel
 {
@@ -212,7 +213,7 @@ namespace Hotel
 
             try
             {
-                Hotel.ClassSerializare.SerializeToXml<List<GuestReportDto>>(ref guestsToSerialize, fileName);
+                ClassSerializare.SerializeToXml<List<GuestReportDto>>(ref guestsToSerialize, fileName);
                 FormReport frmReport = new FormReport();
                 frmReport.Show();
             }

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using Hotel.Localization;
 
 namespace Hotel
 {

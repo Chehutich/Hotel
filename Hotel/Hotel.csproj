@@ -67,7 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Strings.Designer.cs">
+    <Compile Update="Localization\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
@@ -75,7 +75,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Strings.resx">
+    <EmbeddedResource Update="Localization\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>

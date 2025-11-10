@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Threading;
 using System.IO;
+using Hotel.Localization;
 
 namespace Hotel
 {
