@@ -106,6 +106,150 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Гостя з таким номером не знайдено. Бажаєте додати нового гостя зараз?.
+        /// </summary>
+        internal static string Booking_AskCreateGuest_Msg {
+            get {
+                return ResourceManager.GetString("Booking_AskCreateGuest_Msg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Гість не знайдений.
+        /// </summary>
+        internal static string Booking_AskCreateGuest_Title {
+            get {
+                return ResourceManager.GetString("Booking_AskCreateGuest_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Доступні номери:.
+        /// </summary>
+        internal static string Booking_AvailableRooms {
+            get {
+                return ResourceManager.GetString("Booking_AvailableRooms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Заселити.
+        /// </summary>
+        internal static string Booking_CheckIn {
+            get {
+                return ResourceManager.GetString("Booking_CheckIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Виселити.
+        /// </summary>
+        internal static string Booking_CheckOut {
+            get {
+                return ResourceManager.GetString("Booking_CheckOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Знайти гостя.
+        /// </summary>
+        internal static string Booking_FindGuest {
+            get {
+                return ResourceManager.GetString("Booking_FindGuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Знайти вільні номери.
+        /// </summary>
+        internal static string Booking_FindRooms {
+            get {
+                return ResourceManager.GetString("Booking_FindRooms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Інформація про гостя.
+        /// </summary>
+        internal static string Booking_GuestInfo {
+            get {
+                return ResourceManager.GetString("Booking_GuestInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ім&apos;я гостя:.
+        /// </summary>
+        internal static string Booking_GuestName {
+            get {
+                return ResourceManager.GetString("Booking_GuestName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Гостя з таким номером телефону не знайдено..
+        /// </summary>
+        internal static string Booking_GuestNotFound {
+            get {
+                return ResourceManager.GetString("Booking_GuestNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на На жаль, вільних номерів на ці дати/кількість гостей не знайдено..
+        /// </summary>
+        internal static string Booking_NoRoomsFound {
+            get {
+                return ResourceManager.GetString("Booking_NoRoomsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Кількість гостей:.
+        /// </summary>
+        internal static string Booking_NumGuests {
+            get {
+                return ResourceManager.GetString("Booking_NumGuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Всього ночей: {0}.
+        /// </summary>
+        internal static string Booking_NumNights {
+            get {
+                return ResourceManager.GetString("Booking_NumNights", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на -- Спочатку знайдіть номери --.
+        /// </summary>
+        internal static string Booking_SelectRoom {
+            get {
+                return ResourceManager.GetString("Booking_SelectRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на ЗАГАЛЬНА ВАРТІСТЬ:.
+        /// </summary>
+        internal static string Booking_TotalPrice {
+            get {
+                return ResourceManager.GetString("Booking_TotalPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Редагувати.
+        /// </summary>
+        internal static string Button_Edit {
+            get {
+                return ResourceManager.GetString("Button_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Розрахувати.
         /// </summary>
         internal static string ButtonCalculate {
@@ -214,7 +358,7 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ID Бронювання.
+        ///   Ищет локализованную строку, похожую на Номер бронювання.
         /// </summary>
         internal static string Col_BookingID {
             get {
@@ -259,7 +403,7 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на ID.
+        ///   Ищет локализованную строку, похожую на Номер гостя.
         /// </summary>
         internal static string Col_ID {
             get {
@@ -286,6 +430,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Кількість гостей.
+        /// </summary>
+        internal static string Col_NumGuests {
+            get {
+                return ResourceManager.GetString("Col_NumGuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Паспорт.
         /// </summary>
         internal static string Col_Passport {
@@ -300,6 +453,15 @@ namespace Hotel.Localization {
         internal static string Col_Phone {
             get {
                 return ResourceManager.GetString("Col_Phone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ціна за ніч.
+        /// </summary>
+        internal static string Col_PricePerNight {
+            get {
+                return ResourceManager.GetString("Col_PricePerNight", resourceCulture);
             }
         }
         
@@ -331,6 +493,96 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Доступно:.
+        /// </summary>
+        internal static string Dashboard_Available {
+            get {
+                return ResourceManager.GetString("Dashboard_Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Сьогоднішні заселення ({0}).
+        /// </summary>
+        internal static string Dashboard_CheckIns {
+            get {
+                return ResourceManager.GetString("Dashboard_CheckIns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Сьогоднішні виселення ({0}).
+        /// </summary>
+        internal static string Dashboard_CheckOuts {
+            get {
+                return ResourceManager.GetString("Dashboard_CheckOuts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на На прибиранні:.
+        /// </summary>
+        internal static string Dashboard_Cleaning {
+            get {
+                return ResourceManager.GetString("Dashboard_Cleaning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Гість.
+        /// </summary>
+        internal static string Dashboard_Guest {
+            get {
+                return ResourceManager.GetString("Dashboard_Guest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Зайнято:.
+        /// </summary>
+        internal static string Dashboard_Occupied {
+            get {
+                return ResourceManager.GetString("Dashboard_Occupied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на На ремонті:.
+        /// </summary>
+        internal static string Dashboard_Repair {
+            get {
+                return ResourceManager.GetString("Dashboard_Repair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Стан кімнат.
+        /// </summary>
+        internal static string Dashboard_RoomStatus {
+            get {
+                return ResourceManager.GetString("Dashboard_RoomStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Інформаційна панель.
+        /// </summary>
+        internal static string Dashboard_Title {
+            get {
+                return ResourceManager.GetString("Dashboard_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Редагування даних гостя.
+        /// </summary>
+        internal static string EditGuest_Title {
+            get {
+                return ResourceManager.GetString("EditGuest_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Англійська.
         /// </summary>
         internal static string English {
@@ -345,6 +597,15 @@ namespace Hotel.Localization {
         internal static string ErrorDBTitle {
             get {
                 return ResourceManager.GetString("ErrorDBTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Дані гостя успішно оновлено!.
+        /// </summary>
+        internal static string Guest_Update_Success {
+            get {
+                return ResourceManager.GetString("Guest_Update_Success", resourceCulture);
             }
         }
         
@@ -889,6 +1150,33 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Завершено.
+        /// </summary>
+        internal static string Status_Completed {
+            get {
+                return ResourceManager.GetString("Status_Completed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Проживає.
+        /// </summary>
+        internal static string Status_Living {
+            get {
+                return ResourceManager.GetString("Status_Living", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Зайнята.
+        /// </summary>
+        internal static string Status_Occupied {
+            get {
+                return ResourceManager.GetString("Status_Occupied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на На ремонті.
         /// </summary>
         internal static string Status_Repair {
@@ -921,6 +1209,24 @@ namespace Hotel.Localization {
         internal static string UpdateRoomStatusTitle {
             get {
                 return ResourceManager.GetString("UpdateRoomStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Гість з таким номером паспорта вже існує..
+        /// </summary>
+        internal static string Validation_PassportExists {
+            get {
+                return ResourceManager.GetString("Validation_PassportExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Гість з таким номером телефону вже існує..
+        /// </summary>
+        internal static string Validation_PhoneExists {
+            get {
+                return ResourceManager.GetString("Validation_PhoneExists", resourceCulture);
             }
         }
         

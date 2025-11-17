@@ -9,80 +9,21 @@ using System.Threading;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using Hotel.Localization;
+using Hotel.Localization; // (ОСЬ ВИПРАВЛЕННЯ)
 
-namespace Hotel
+namespace Hotel.Forms
 {
     public partial class LoginForm : Form
     {
         private const string LanguageSettingsFile = "language.cfg";
         private const string ThemeSettingsFile = "theme.cfg";
 
-        // (НОВЕ) Змінні для зберігання завантажених іконок
-        private Image imgEyeOpen;
-        private Image imgEyeClosed;
-
         public LoginForm()
         {
             InitializeComponent();
 
-            // Завантажуємо всі іконки
-            LoadIconToPictureBox(this.btnLanguage, "language_icon.png");
-            LoadIconToPictureBox(this.btnTheme, "theme_icon.png");
-
-            // (НОВЕ) Завантажуємо іконки для ока
-            imgEyeOpen = LoadImage("eye_open.png");
-            imgEyeClosed = LoadImage("eye_closed.png");
-
-            // Встановлюємо початкову іконку (закрите око)
-            if (imgEyeClosed != null)
-            {
-                this.pbShowPassword.Image = imgEyeClosed;
-            }
+            UpdateTheme();
         }
-
-        // --- (НОВІ МЕТОДИ) Обробка ока ---
-
-        // (НОВИЙ МЕТОД) Обробник натискання на "око"
-        private void pbShowPassword_Click(object? sender, EventArgs e)
-        {
-            // Перевіряємо, чи пароль зараз прихований
-            if (txtPassword.UseSystemPasswordChar)
-            {
-                // Показуємо пароль
-                txtPassword.UseSystemPasswordChar = false;
-                pbShowPassword.Image = imgEyeOpen; // Показуємо "відкрите око"
-            }
-            else
-            {
-                // Приховуємо пароль
-                txtPassword.UseSystemPasswordChar = true;
-                pbShowPassword.Image = imgEyeClosed; // Показуємо "закрите око"
-            }
-        }
-
-        // (НОВИЙ МЕТОД) Завантажує картинку з ресурсів
-        private Image? LoadImage(string iconFileName)
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                string resourceName = "Hotel.images." + iconFileName;
-
-                using (var stream = assembly.GetManifestResourceStream(resourceName))
-                {
-                    if (stream != null)
-                    {
-                        return Image.FromStream(stream);
-                    }
-                }
-            }
-            catch { } // Ігноруємо помилки, якщо іконки немає
-            return null;
-        }
-
-
-        // --- (ІСНУЮЧІ МЕТОДИ) Тема, Мова, Вхід ---
 
         private void btnTheme_Click(object? sender, EventArgs e)
         {
@@ -93,6 +34,7 @@ namespace Hotel
                 {
                     currentTheme = File.ReadAllText(ThemeSettingsFile).Trim();
                 }
+
                 string newTheme = (currentTheme == "Light") ? "Dark" : "Light";
                 File.WriteAllText(ThemeSettingsFile, newTheme);
                 ThemeManager.ApplyTheme(newTheme);
@@ -110,12 +52,21 @@ namespace Hotel
             this.loginBox.ForeColor = ThemeManager.TextColor;
             this.lblUsername.ForeColor = ThemeManager.TextColor;
             this.lblPassword.ForeColor = ThemeManager.TextColor;
+
             this.txtUsername.BackColor = ThemeManager.InputBackground;
             this.txtUsername.ForeColor = ThemeManager.InputForeColor;
             this.txtPassword.BackColor = ThemeManager.InputBackground;
             this.txtPassword.ForeColor = ThemeManager.InputForeColor;
+
             this.btnLogin.BackColor = ThemeManager.ButtonBackground;
             this.btnLogin.ForeColor = ThemeManager.ButtonForeColor;
+
+            this.btnLanguage.Image = ThemeManager.LanguageIcon;
+            this.btnTheme.Image = ThemeManager.ThemeIcon;
+
+            this.pbShowPassword.Image = txtPassword.UseSystemPasswordChar ?
+                ThemeManager.EyeClosedIcon :
+                ThemeManager.EyeOpenIcon;
         }
 
         private void btnLanguage_Click(object? sender, EventArgs e)
@@ -136,11 +87,26 @@ namespace Hotel
 
         private void UpdateLanguage()
         {
+            // Тепер помилок тут не буде, бо "using Hotel.Localization;" додано
             this.Text = Strings.AppTitle;
             this.loginBox.Text = Strings.Login_Title;
             this.lblUsername.Text = Strings.Login_Username;
             this.lblPassword.Text = Strings.Login_Password;
             this.btnLogin.Text = Strings.Login_Button;
+        }
+
+        private void pbShowPassword_Click(object? sender, EventArgs e)
+        {
+            if (txtPassword.UseSystemPasswordChar)
+            {
+                txtPassword.UseSystemPasswordChar = false;
+                pbShowPassword.Image = ThemeManager.EyeOpenIcon;
+            }
+            else
+            {
+                txtPassword.UseSystemPasswordChar = true;
+                pbShowPassword.Image = ThemeManager.EyeClosedIcon;
+            }
         }
 
         private string ComputeSha256Hash(string rawData)
@@ -194,39 +160,6 @@ namespace Hotel
             catch (Exception ex)
             {
                 MessageBox.Show($"{Strings.Login_Error_Connection} {ex.Message}", Strings.Login_Error_ConnectionTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void LoadIconToPictureBox(PictureBox pb, string iconFileName)
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                string resourceName = "Hotel.images." + iconFileName;
-
-                using (var stream = assembly.GetManifestResourceStream(resourceName))
-                {
-                    if (stream != null)
-                    {
-                        pb.Image = Image.FromStream(stream);
-                    }
-                    else
-                    {
-                        pb.BackColor = Color.LightGray;
-                        string text = "Img";
-                        if (iconFileName.Contains("lang")) text = "Lang";
-                        if (iconFileName.Contains("theme")) text = "Theme";
-                        pb.Controls.Add(new Label { Text = text, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Помилка завантаження іконки '{iconFileName}': {ex.Message}",
-                                Strings.ValidationTitle,
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
-                pb.BackColor = Color.Red;
             }
         }
     }

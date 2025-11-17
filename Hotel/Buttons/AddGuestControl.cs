@@ -1,12 +1,14 @@
-﻿using Hotel.Models;
+﻿using Hotel.Forms;
+using Hotel.Localization;
+using Hotel.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Linq;
-using Hotel.Localization;
 
-namespace Hotel
+namespace Hotel.Buttons
 {
     public class AddGuestControl : UserControl
     {
@@ -17,7 +19,62 @@ namespace Hotel
         private Font commonFont = new Font("Segoe UI", 11F);
         private Font pickerFont = new Font("Segoe UI", 12F);
 
+        private int? editingGuestId = null;
+
         public AddGuestControl()
+        {
+            InitializeComponent();
+        }
+
+        // Конструктор для редагування
+        public AddGuestControl(int guestIdToEdit)
+        {
+            InitializeComponent();
+            this.editingGuestId = guestIdToEdit;
+            guestBox.Text = Strings.EditGuest_Title;
+            LoadGuestDataAsync(guestIdToEdit);
+        }
+
+        // (НОВИЙ КОНСТРУКТОР) Для швидкого створення з відомим номером телефону
+        public AddGuestControl(string phoneNumberToPreset)
+        {
+            InitializeComponent();
+            // Одразу заповнюємо поле телефону
+            txtPhoneNumber.Text = phoneNumberToPreset;
+        }
+
+        private async void LoadGuestDataAsync(int guestId)
+        {
+            try
+            {
+                using (var context = new HotelDbContext())
+                {
+                    var guest = await context.Guests.FindAsync(guestId);
+                    if (guest != null)
+                    {
+                        txtFirstName.Text = guest.GuestFirstName;
+                        txtLastName.Text = guest.GuestLastName;
+                        txtPhoneNumber.Text = guest.PhoneNumber;
+                        txtPassport.Text = guest.PassportSeries;
+                        if (guest.DateOfBirth.HasValue)
+                        {
+                            dtpDateOfBirth.Value = guest.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Не вдалося завантажити дані гостя.", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ClearForm();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Помилка завантаження даних: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void InitializeComponent()
         {
             guestBox = new GroupBox
             {
@@ -27,7 +84,7 @@ namespace Hotel
                 Height = 480,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(25),
-                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
+                ForeColor = ThemeManager.TextColor
             };
 
             var layoutPanel = new TableLayoutPanel
@@ -40,12 +97,10 @@ namespace Hotel
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            // (ЗМІНЕНО) Кольори полів вводу
             txtFirstName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             txtLastName = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             txtPhoneNumber = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (ЗМІНЕНО) Кольори календаря
             dtpDateOfBirth = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
             dtpDateOfBirth.CalendarMonthBackground = ThemeManager.InputBackground;
             dtpDateOfBirth.CalendarForeColor = ThemeManager.InputForeColor;
@@ -54,8 +109,6 @@ namespace Hotel
             dtpDateOfBirth.CalendarTrailingForeColor = Color.Gray;
 
             txtPassport = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
-
-            // (ЗМІНЕНО) Кольори кнопок
             btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
 
@@ -92,37 +145,114 @@ namespace Hotel
 
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text)) { MessageBox.Show(Strings.ValidationNamesRequired, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            string phoneNumber = txtPhoneNumber.Text;
-            if (!string.IsNullOrWhiteSpace(phoneNumber)) { string phoneRegexPattern = @"^(\+380\d{9}|0\d{9})$"; if (!Regex.IsMatch(phoneNumber, phoneRegexPattern)) { MessageBox.Show(Strings.ValidationPhoneFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
-            string passport = txtPassport.Text;
-            if (!string.IsNullOrWhiteSpace(passport)) { string passportRegexPattern = @"^(\d{9}|[A-Z]{2}\d{6})$"; if (!Regex.IsMatch(passport, passportRegexPattern)) { MessageBox.Show(Strings.ValidationPassportFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } }
+            if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text))
+            {
+                MessageBox.Show(Strings.ValidationNamesRequired, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string phoneNumber = txtPhoneNumber.Text.Trim();
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                MessageBox.Show(Strings.ValidationPhoneFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            string phoneRegexPattern = @"^(\+380\d{9}|0\d{9})$";
+            if (!Regex.IsMatch(phoneNumber, phoneRegexPattern))
+            {
+                MessageBox.Show(Strings.ValidationPhoneFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string passport = txtPassport.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(passport))
+            {
+                string passportRegexPattern = @"^(\d{9}|[A-Z]{2}\d{6})$";
+                if (!Regex.IsMatch(passport, passportRegexPattern))
+                {
+                    MessageBox.Show(Strings.ValidationPassportFormat, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+            else
+            {
+                passport = null;
+            }
 
             try
             {
                 using (var context = new HotelDbContext())
                 {
-                    var newGuest = new Guest
-                    {
-                        GuestFirstName = txtFirstName.Text,
-                        GuestLastName = txtLastName.Text,
-                        PhoneNumber = phoneNumber,
-                        PassportSeries = passport,
-                        DateOfBirth = DateOnly.FromDateTime(dtpDateOfBirth.Value),
-                        IsRegularGuest = false
-                    };
-                    var childInfo = new PresenceOfChild
-                    {
-                        ChildrenPresence = false,
-                        NumberOfChild = 0,
-                        AgeOfChild = null
-                    };
-                    newGuest.PresenceOfChild = childInfo;
-                    context.Guests.Add(newGuest);
-                    await context.SaveChangesAsync();
+                    bool phoneExists = await context.Guests.AnyAsync(g =>
+                        g.PhoneNumber == phoneNumber &&
+                        g.IdGuest != editingGuestId);
 
-                    MessageBox.Show("Гостя успішно додано!", Strings.AddGuestTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (phoneExists)
+                    {
+                        MessageBox.Show(Strings.Validation_PhoneExists, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (passport != null)
+                    {
+                        bool passportExists = await context.Guests.AnyAsync(g =>
+                            g.PassportSeries == passport &&
+                            g.IdGuest != editingGuestId);
+
+                        if (passportExists)
+                        {
+                            MessageBox.Show(Strings.Validation_PassportExists, Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+
+                    if (editingGuestId == null)
+                    {
+                        var newGuest = new Guest
+                        {
+                            GuestFirstName = txtFirstName.Text,
+                            GuestLastName = txtLastName.Text,
+                            PhoneNumber = phoneNumber,
+                            PassportSeries = passport,
+                            DateOfBirth = DateOnly.FromDateTime(dtpDateOfBirth.Value),
+                            IsRegularGuest = false
+                        };
+
+                        var childInfo = new PresenceOfChild
+                        {
+                            ChildrenPresence = false,
+                            NumberOfChild = 0,
+                            AgeOfChild = null
+                        };
+                        newGuest.PresenceOfChild = childInfo;
+
+                        context.Guests.Add(newGuest);
+                        await context.SaveChangesAsync();
+                        MessageBox.Show("Гостя успішно додано!", Strings.AddGuestTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        var guestToUpdate = await context.Guests.FindAsync(editingGuestId.Value);
+                        if (guestToUpdate != null)
+                        {
+                            guestToUpdate.GuestFirstName = txtFirstName.Text;
+                            guestToUpdate.GuestLastName = txtLastName.Text;
+                            guestToUpdate.PhoneNumber = phoneNumber;
+                            guestToUpdate.PassportSeries = passport;
+                            guestToUpdate.DateOfBirth = DateOnly.FromDateTime(dtpDateOfBirth.Value);
+
+                            await context.SaveChangesAsync();
+                            MessageBox.Show(Strings.Guest_Update_Success, Strings.EditGuest_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+
                     ClearForm();
+
+                    var form1 = this.FindForm() as Form1;
+                    if (form1 != null)
+                    {
+                        form1.ShowListGuests();
+                    }
                 }
             }
             catch (Exception ex)
@@ -134,6 +264,11 @@ namespace Hotel
         private void BtnCancel_Click(object? sender, EventArgs e)
         {
             ClearForm();
+            var form1 = this.FindForm() as Form1;
+            if (form1 != null)
+            {
+                form1.ShowListGuests();
+            }
         }
 
         private void ClearForm()
@@ -143,6 +278,8 @@ namespace Hotel
             txtPhoneNumber.Clear();
             txtPassport.Clear();
             dtpDateOfBirth.Value = DateTime.Now;
+            editingGuestId = null;
+            guestBox.Text = Strings.AddGuestTitle;
         }
 
         private Label CreateLabel(string text)
@@ -154,7 +291,7 @@ namespace Hotel
                 TextAlign = ContentAlignment.MiddleRight,
                 Margin = new Padding(5),
                 Font = commonFont,
-                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
+                ForeColor = ThemeManager.TextColor
             };
         }
     }

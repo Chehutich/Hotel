@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Hotel.Localization;
 
-namespace Hotel
+namespace Hotel.Buttons
 {
     public class CheckAvailabilityControl : UserControl
     {

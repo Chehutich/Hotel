@@ -10,4 +10,8 @@ public partial class HotelType
     public string TypeName { get; set; } = null!;
 
     public decimal PricePerNight { get; set; }
+
+    // --- (НОВИЙ РЯДОК) ---
+    public int? MaxCapacity { get; set; }
+    // --- (КІНЕЦЬ НОВОГО РЯДКА) ---
 }

@@ -1,7 +1,10 @@
+using System;
 using System.Globalization;
 using System.Threading;
 using System.IO;
-using Hotel.Localization;
+using System.Windows.Forms; // (Переконайтеся, що цей рядок є)
+using Hotel.Forms;          // (ОСЬ ЦЕЙ РЯДОК ВИРІШУЄ ПРОБЛЕМУ)
+using Hotel.Localization;   // (ДОДАЙТЕ ЦЕЙ РЯДОК)
 
 namespace Hotel
 {
@@ -14,7 +17,6 @@ namespace Hotel
         static void Main()
         {
             // === КРОК 1: ЗАВАНТАЖЕННЯ .env (для даних про хост/БД) ===
-            // (ПЕРЕМІЩЕНО ВГОРУ) Це має статися до запуску будь-якої форми
             DotNetEnv.Env.Load(".env");
             try
             {
@@ -25,8 +27,6 @@ namespace Hotel
                     throw new InvalidOperationException("Database connection parameters are not configured in .env");
                 }
 
-                // (ВАЖЛИВО) Ми завантажуємо root-рядок в AppContext.
-                // DbContext буде використовувати цей рядок.
                 var port = Environment.GetEnvironmentVariable("DB_PORT");
                 var user = Environment.GetEnvironmentVariable("DB_USER");
                 var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
@@ -83,11 +83,12 @@ namespace Hotel
             // === КРОК 4: ЗАПУСК АВТОРИЗАЦІЇ ===
             ApplicationConfiguration.Initialize();
 
+            // Тепер Program.cs "бачить" LoginForm, тому що ми додали using Hotel.Forms;
             LoginForm loginForm = new LoginForm();
 
             if (loginForm.ShowDialog() == DialogResult.OK)
             {
-                // Вхід успішний, AppContext.CurrentUser тепер заповнений
+                // І він "бачить" Form1
                 Application.Run(new Form1());
             }
             // (Якщо не OK, програма просто завершить роботу)

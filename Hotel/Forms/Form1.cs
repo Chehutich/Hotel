@@ -1,11 +1,12 @@
+using Hotel.Buttons;
+using Hotel.Localization;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Hotel.Localization;
 
-namespace Hotel
+namespace Hotel.Forms
 {
     public partial class Form1 : Form
     {
@@ -14,6 +15,18 @@ namespace Hotel
         public Form1()
         {
             InitializeUI();
+        }
+
+        public void ShowControl(Control control)
+        {
+            pnlContent.Controls.Clear();
+            control.Dock = DockStyle.Fill;
+            pnlContent.Controls.Add(control);
+        }
+
+        public void ShowListGuests()
+        {
+            ShowControl(new ListGuestsControl());
         }
 
         private string GetLocalizedRoleName(string dbJobTitle)
@@ -29,21 +42,16 @@ namespace Hotel
             }
         }
 
-        // (НОВИЙ МЕТОД) Обробник натискання на кнопку виходу
         private void RoleLabel_Click(object? sender, EventArgs e)
         {
-            // Показуємо вікно підтвердження
             var result = MessageBox.Show(
-                Strings.Logout_Confirm_Text,   // "Ви точно бажаєте вийти із системи?"
-                Strings.Logout_Confirm_Title,  // "Вихід із системи"
+                Strings.Logout_Confirm_Text,
+                Strings.Logout_Confirm_Title,
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
-            // Якщо користувач натиснув "Так"
             if (result == DialogResult.Yes)
             {
-                // Перезапускаємо програму.
-                // Program.cs автоматично покаже LoginForm, оскільки AppContext.CurrentUser буде порожнім.
                 Application.Restart();
             }
         }
@@ -82,30 +90,28 @@ namespace Hotel
                 FlowDirection = FlowDirection.LeftToRight
             };
 
-            // --- Іконка Home ---
-            const string YOUR_HOME_ICON_FILE_NAME = "home_icon.png";
+            // (ПОЧАТОК ЗМІН) --- Іконки з ThemeManager ---
             var homePictureBox = new PictureBox
             {
                 Size = new Size(45, 45),
                 SizeMode = PictureBoxSizeMode.Zoom,
-                Cursor = Cursors.Hand
+                Cursor = Cursors.Hand,
+                Image = ThemeManager.HomeIcon // (ЗМІНЕНО)
             };
-            LoadIconToPictureBox(homePictureBox, YOUR_HOME_ICON_FILE_NAME);
             homePictureBox.Click += BtnHome_Click;
             homePanel.Controls.Add(homePictureBox);
 
-            // --- Іконка Settings ---
-            const string YOUR_SETTINGS_ICON_FILE_NAME = "settings_icon.png";
             var settingsPictureBox = new PictureBox
             {
                 Size = new Size(45, 45),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Cursor = Cursors.Hand,
-                Margin = new Padding(10, 5, 0, 0)
+                Margin = new Padding(10, 5, 0, 0),
+                Image = ThemeManager.SettingsIcon // (ЗМІНЕНО)
             };
-            LoadIconToPictureBox(settingsPictureBox, YOUR_SETTINGS_ICON_FILE_NAME);
             settingsPictureBox.Click += BtnSettings_Click;
             homePanel.Controls.Add(settingsPictureBox);
+            // (КІНЕЦЬ ЗМІН) --------------------------
 
             var buttonFlowPanel = new FlowLayoutPanel
             {
@@ -136,7 +142,6 @@ namespace Hotel
                 new { Text = Strings.ListRooms, ClickAction = (Action<object?, EventArgs>)BtnListRooms_Click },
                 new { Text = Strings.AddBooking, ClickAction = (Action<object?, EventArgs>)BtnAddBooking_Click },
                 new { Text = Strings.ListBookings, ClickAction = (Action<object?, EventArgs>)BtnListBookings_Click },
-                new { Text = Strings.CalculatePrice, ClickAction = (Action<object?, EventArgs>)BtnCalculatePrice_Click },
                 new { Text = Strings.UpdateRoomStatus, ClickAction = (Action<object?, EventArgs>)BtnUpdateStatus_Click }
             };
 
@@ -155,7 +160,6 @@ namespace Hotel
                 buttonFlowPanel.Controls.Add(button);
             }
 
-            // --- Індикатор ролі (тепер кнопка виходу) ---
             var roleLabel = new Label
             {
                 Text = userRoleDisplay,
@@ -165,14 +169,12 @@ namespace Hotel
                 BackColor = ThemeManager.ButtonBackground,
                 ForeColor = ThemeManager.ButtonForeColor,
                 TextAlign = ContentAlignment.MiddleCenter,
-                Cursor = Cursors.Hand // (НОВЕ) Показуємо "руку" при наведенні
+                Cursor = Cursors.Hand
             };
-            roleLabel.Click += RoleLabel_Click; // (НОВЕ) Додаємо обробник натискання
-                                                // --- Кінець ---
+            roleLabel.Click += RoleLabel_Click;
 
             buttonFlowPanel.Controls.Add(roleLabel);
 
-            // Приховування кнопок для Адміністратора
             if (AppContext.CurrentUser != null && AppContext.CurrentUser.JobTitle == "Адміністратор")
             {
                 foreach (Control c in buttonFlowPanel.Controls)
@@ -187,50 +189,16 @@ namespace Hotel
             this.Load += (sender, e) => ShowControl(new WelcomeControl());
         }
 
-        private void LoadIconToPictureBox(PictureBox pb, string iconFileName)
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                string resourceName = "Hotel.images." + iconFileName;
-
-                using (var stream = assembly.GetManifestResourceStream(resourceName))
-                {
-                    if (stream != null)
-                    {
-                        pb.Image = Image.FromStream(stream);
-                    }
-                    else
-                    {
-                        pb.BackColor = Color.LightCoral;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Помилка завантаження іконки '{iconFileName}': {ex.Message}",
-                                Strings.ValidationTitle,
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
-                pb.BackColor = Color.Red;
-            }
-        }
-
-        private void ShowControl(Control control)
-        {
-            pnlContent.Controls.Clear();
-            control.Dock = DockStyle.Fill;
-            pnlContent.Controls.Add(control);
-        }
+        // (ВИДАЛЕНО) Метод LoadIconToPictureBox() тепер не потрібен, 
+        // оскільки вся логіка завантаження знаходиться в ThemeManager.
 
         private void BtnHome_Click(object? sender, EventArgs e) => ShowControl(new WelcomeControl());
         private void BtnCheckAvailability_Click(object? sender, EventArgs e) => ShowControl(new CheckAvailabilityControl());
         private void BtnAddGuest_Click(object? sender, EventArgs e) => ShowControl(new AddGuestControl());
-        private void BtnListGuests_Click(object? sender, EventArgs e) => ShowControl(new ListGuestsControl());
+        private void BtnListGuests_Click(object? sender, EventArgs e) => ShowListGuests();
         private void BtnListRooms_Click(object? sender, EventArgs e) => ShowControl(new ListRoomsControl());
         private void BtnAddBooking_Click(object? sender, EventArgs e) => ShowControl(new AddBookingControl());
         private void BtnListBookings_Click(object? sender, EventArgs e) => ShowControl(new ListBookingsControl());
-        private void BtnCalculatePrice_Click(object? sender, EventArgs e) => ShowControl(new CalculatePriceControl());
         private void BtnUpdateStatus_Click(object? sender, EventArgs e) => ShowControl(new UpdateRoomStatusControl());
         private void BtnSettings_Click(object? sender, EventArgs e) => ShowControl(new SettingsControl());
     }

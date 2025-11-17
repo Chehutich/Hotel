@@ -12,21 +12,33 @@
     <None Remove="home_icon.png" />
     <None Remove="hotel_image.jpg" />
     <None Remove="images\eye_closed.png" />
+    <None Remove="images\eye_closed_dark_icon.png" />
     <None Remove="images\eye_open.png" />
+    <None Remove="images\eye_open_dark_icon.png" />
+    <None Remove="images\home_dark_icon.png" />
     <None Remove="images\home_icon.png" />
     <None Remove="images\hotel_image.jpg" />
+    <None Remove="images\language_dark_icon.png" />
     <None Remove="images\language_icon.png" />
+    <None Remove="images\settings_dark_icon.png" />
     <None Remove="images\settings_icon.png" />
+    <None Remove="images\theme_dark_icon.png" />
     <None Remove="images\theme_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="images\eye_closed.png" />
+    <EmbeddedResource Include="images\eye_closed_dark_icon.png" />
     <EmbeddedResource Include="images\eye_open.png" />
+    <EmbeddedResource Include="images\eye_open_dark_icon.png" />
+    <EmbeddedResource Include="images\home_dark_icon.png" />
     <EmbeddedResource Include="images\home_icon.png" />
     <EmbeddedResource Include="images\hotel_image.jpg" />
+    <EmbeddedResource Include="images\language_dark_icon.png" />
     <EmbeddedResource Include="images\language_icon.png" />
+    <EmbeddedResource Include="images\settings_dark_icon.png" />
     <EmbeddedResource Include="images\settings_icon.png" />
+    <EmbeddedResource Include="images\theme_dark_icon.png" />
     <EmbeddedResource Include="images\theme_icon.png" />
   </ItemGroup>
 

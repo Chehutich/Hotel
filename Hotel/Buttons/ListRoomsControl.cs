@@ -1,13 +1,14 @@
-﻿using Hotel.Models;
+﻿using Hotel.Forms;
+using Hotel.Localization;
+using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Hotel.Localization;
 
-namespace Hotel
+namespace Hotel.Buttons // (Переконайтеся, що namespace правильний)
 {
     public class ListRoomsControl : UserControl
     {
@@ -39,7 +40,7 @@ namespace Hotel
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
                 Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 Padding = new Padding(15),
-                ForeColor = ThemeManager.TextColor // (ЗМІНЕНО)
+                ForeColor = ThemeManager.TextColor
             };
 
             var mainLayout = new TableLayoutPanel
@@ -60,11 +61,8 @@ namespace Hotel
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            // (ЗМІНЕНО) Кольори полів вводу
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             cmbSort = new ComboBox { Width = 220, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
-
-            // (ЗМІНЕНО) Кольори кнопок
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
 
@@ -72,10 +70,8 @@ namespace Hotel
             cmbSort.DisplayMember = "Value";
             cmbSort.ValueMember = "Key";
 
-            // (ЗМІНЕНО) Колір тексту Label
             filterPanel.Controls.Add(new Label { Text = Strings.LabelSearch, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Font = commonFont, Margin = new Padding(3, 0, 0, 0), ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(txtSearch);
-            // (ЗМІНЕНО) Колір тексту Label
             filterPanel.Controls.Add(new Label { Text = Strings.LabelSort, AutoSize = true, Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(10, 0, 0, 0), Font = commonFont, ForeColor = ThemeManager.TextColor });
             filterPanel.Controls.Add(cmbSort);
             filterPanel.Controls.Add(btnSearch);
@@ -87,12 +83,11 @@ namespace Hotel
                 AllowUserToAddRows = false,
                 ReadOnly = true,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = ThemeManager.GridBackground, // (ЗМІНЕНО)
+                BackgroundColor = ThemeManager.GridBackground,
                 BorderStyle = BorderStyle.None,
                 Font = new Font("Segoe UI", 10F)
             };
 
-            // (ЗМІНЕНО) Кольори сітки
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             dgv.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = ThemeManager.GridHeaderForeColor;
@@ -128,47 +123,58 @@ namespace Hotel
             CenterControls();
         }
 
+        // (ПОЧАТОК ЗМІН) --- Логіка LoadRooms оновлена ---
         private async Task LoadRooms(string? searchTerm = null, string? sortBy = null)
         {
             try
             {
                 using (var context = new HotelDbContext())
                 {
-                    var query = context.HotelRooms.AsQueryable();
+                    // (ЗМІНЕНО) Тепер ми об'єднуємо HotelRooms та HotelTypes
+                    var query = from hr in context.HotelRooms
+                                join ht in context.HotelTypes on hr.RoomType equals ht.TypeName
+                                select new
+                                {
+                                    hr.IdRooms,
+                                    hr.RoomType,
+                                    ht.PricePerNight, // (ДОДАНО)
+                                    hr.RoomStatus
+                                };
 
                     if (!string.IsNullOrWhiteSpace(searchTerm))
                     {
-                        query = query.Where(hr =>
-                            hr.RoomType.Contains(searchTerm) ||
-                            hr.RoomStatus.Contains(searchTerm)
+                        query = query.Where(r =>
+                            r.RoomType.Contains(searchTerm) ||
+                            r.RoomStatus.Contains(searchTerm)
                         );
                     }
 
                     switch (sortBy)
                     {
-                        case "ID_DESC": query = query.OrderByDescending(hr => hr.IdRooms); break;
-                        case "Type_ASC": query = query.OrderBy(hr => hr.RoomType); break;
-                        case "Type_DESC": query = query.OrderByDescending(hr => hr.RoomType); break;
-                        case "Status_Available": query = query.OrderBy(hr => hr.RoomStatus != "доступна").ThenBy(hr => hr.RoomStatus); break;
-                        case "Status_Repair": query = query.OrderBy(hr => hr.RoomStatus != "на ремонті").ThenBy(hr => hr.RoomStatus); break;
-                        case "Status_Cleaning": query = query.OrderBy(hr => hr.RoomStatus != "на прибиранні").ThenBy(hr => hr.RoomStatus); break;
+                        case "ID_DESC": query = query.OrderByDescending(r => r.IdRooms); break;
+                        case "Type_ASC": query = query.OrderBy(r => r.RoomType); break;
+                        case "Type_DESC": query = query.OrderByDescending(r => r.RoomType); break;
+                        case "Status_Available": query = query.OrderBy(r => r.RoomStatus != "доступна").ThenBy(r => r.RoomStatus); break;
+                        case "Status_Repair": query = query.OrderBy(r => r.RoomStatus != "на ремонті").ThenBy(r => r.RoomStatus); break;
+                        case "Status_Cleaning": query = query.OrderBy(r => r.RoomStatus != "на прибиранні").ThenBy(r => r.RoomStatus); break;
                         case "ID_ASC":
-                        default: query = query.OrderBy(hr => hr.IdRooms); break;
+                        default: query = query.OrderBy(r => r.IdRooms); break;
                     }
 
-                    var rooms = await query
-                        .Select(hr => new
-                        {
-                            hr.IdRooms,
-                            hr.RoomType,
-                            hr.RoomStatus
-                        })
-                        .ToListAsync();
-
+                    var rooms = await query.ToListAsync();
                     dgv.DataSource = rooms;
 
+                    // (ЗМІНЕНО) Оновлюємо заголовки колонок
                     if (dgv.Columns["IdRooms"] != null) dgv.Columns["IdRooms"].HeaderText = Strings.Col_RoomID;
                     if (dgv.Columns["RoomType"] != null) dgv.Columns["RoomType"].HeaderText = Strings.Col_RoomType;
+
+                    // (ДОДАНО) Нова колонка
+                    if (dgv.Columns["PricePerNight"] != null)
+                    {
+                        dgv.Columns["PricePerNight"].HeaderText = Strings.Col_PricePerNight;
+                        dgv.Columns["PricePerNight"].DefaultCellStyle.Format = "F2"; // Формат (напр. 700.00)
+                    }
+
                     if (dgv.Columns["RoomStatus"] != null) dgv.Columns["RoomStatus"].HeaderText = Strings.Col_Status;
                 }
             }
@@ -177,6 +183,7 @@ namespace Hotel
                 MessageBox.Show($"Помилка завантаження списку кімнат: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        // (КІНЕЦЬ ЗМІН) -----------------------------------
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {

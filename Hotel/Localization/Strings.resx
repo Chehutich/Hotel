@@ -132,6 +132,51 @@
   <data name="AppTitle" xml:space="preserve">
     <value>Система управління готелем</value>
   </data>
+  <data name="Booking_AskCreateGuest_Msg" xml:space="preserve">
+    <value>Гостя з таким номером не знайдено. Бажаєте додати нового гостя зараз?</value>
+  </data>
+  <data name="Booking_AskCreateGuest_Title" xml:space="preserve">
+    <value>Гість не знайдений</value>
+  </data>
+  <data name="Booking_AvailableRooms" xml:space="preserve">
+    <value>Доступні номери:</value>
+  </data>
+  <data name="Booking_CheckIn" xml:space="preserve">
+    <value>Заселити</value>
+  </data>
+  <data name="Booking_CheckOut" xml:space="preserve">
+    <value>Виселити</value>
+  </data>
+  <data name="Booking_FindGuest" xml:space="preserve">
+    <value>Знайти гостя</value>
+  </data>
+  <data name="Booking_FindRooms" xml:space="preserve">
+    <value>Знайти вільні номери</value>
+  </data>
+  <data name="Booking_GuestInfo" xml:space="preserve">
+    <value>Інформація про гостя</value>
+  </data>
+  <data name="Booking_GuestName" xml:space="preserve">
+    <value>Ім'я гостя:</value>
+  </data>
+  <data name="Booking_GuestNotFound" xml:space="preserve">
+    <value>Гостя з таким номером телефону не знайдено.</value>
+  </data>
+  <data name="Booking_NoRoomsFound" xml:space="preserve">
+    <value>На жаль, вільних номерів на ці дати/кількість гостей не знайдено.</value>
+  </data>
+  <data name="Booking_NumGuests" xml:space="preserve">
+    <value>Кількість гостей:</value>
+  </data>
+  <data name="Booking_NumNights" xml:space="preserve">
+    <value>Всього ночей: {0}</value>
+  </data>
+  <data name="Booking_SelectRoom" xml:space="preserve">
+    <value>-- Спочатку знайдіть номери --</value>
+  </data>
+  <data name="Booking_TotalPrice" xml:space="preserve">
+    <value>ЗАГАЛЬНА ВАРТІСТЬ:</value>
+  </data>
   <data name="ButtonCalculate" xml:space="preserve">
     <value>Розрахувати</value>
   </data>
@@ -153,6 +198,9 @@
   <data name="ButtonSearch" xml:space="preserve">
     <value>Пошук</value>
   </data>
+  <data name="Button_Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
   <data name="CalculatePrice" xml:space="preserve">
     <value>Розрахувати вартість</value>
   </data>
@@ -169,7 +217,7 @@
     <value>Дата народження</value>
   </data>
   <data name="Col_BookingID" xml:space="preserve">
-    <value>ID Бронювання</value>
+    <value>Номер бронювання</value>
   </data>
   <data name="Col_CheckIn" xml:space="preserve">
     <value>Дата заїзду</value>
@@ -184,7 +232,7 @@
     <value>Ім'я гостя</value>
   </data>
   <data name="Col_ID" xml:space="preserve">
-    <value>ID</value>
+    <value>Номер гостя</value>
   </data>
   <data name="Col_IsRegular" xml:space="preserve">
     <value>Постійний клієнт</value>
@@ -192,11 +240,17 @@
   <data name="Col_LastName" xml:space="preserve">
     <value>Прізвище</value>
   </data>
+  <data name="Col_NumGuests" xml:space="preserve">
+    <value>Кількість гостей</value>
+  </data>
   <data name="Col_Passport" xml:space="preserve">
     <value>Паспорт</value>
   </data>
   <data name="Col_Phone" xml:space="preserve">
     <value>Телефон</value>
+  </data>
+  <data name="Col_PricePerNight" xml:space="preserve">
+    <value>Ціна за ніч</value>
   </data>
   <data name="Col_RoomID" xml:space="preserve">
     <value>Номер кімнати</value>
@@ -207,11 +261,44 @@
   <data name="Col_Status" xml:space="preserve">
     <value>Статус</value>
   </data>
+  <data name="Dashboard_Available" xml:space="preserve">
+    <value>Доступно:</value>
+  </data>
+  <data name="Dashboard_CheckIns" xml:space="preserve">
+    <value>Сьогоднішні заселення ({0})</value>
+  </data>
+  <data name="Dashboard_CheckOuts" xml:space="preserve">
+    <value>Сьогоднішні виселення ({0})</value>
+  </data>
+  <data name="Dashboard_Cleaning" xml:space="preserve">
+    <value>На прибиранні:</value>
+  </data>
+  <data name="Dashboard_Guest" xml:space="preserve">
+    <value>Гість</value>
+  </data>
+  <data name="Dashboard_Occupied" xml:space="preserve">
+    <value>Зайнято:</value>
+  </data>
+  <data name="Dashboard_Repair" xml:space="preserve">
+    <value>На ремонті:</value>
+  </data>
+  <data name="Dashboard_RoomStatus" xml:space="preserve">
+    <value>Стан кімнат</value>
+  </data>
+  <data name="Dashboard_Title" xml:space="preserve">
+    <value>Інформаційна панель</value>
+  </data>
+  <data name="EditGuest_Title" xml:space="preserve">
+    <value>Редагування даних гостя</value>
+  </data>
   <data name="English" xml:space="preserve">
     <value>Англійська</value>
   </data>
   <data name="ErrorDBTitle" xml:space="preserve">
     <value>Помилка бази даних</value>
+  </data>
+  <data name="Guest_Update_Success" xml:space="preserve">
+    <value>Дані гостя успішно оновлено!</value>
   </data>
   <data name="LabelBookingStatus" xml:space="preserve">
     <value>Статус бронювання:</value>
@@ -393,6 +480,15 @@
   <data name="Status_Cleaning" xml:space="preserve">
     <value>На прибиранні</value>
   </data>
+  <data name="Status_Completed" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="Status_Living" xml:space="preserve">
+    <value>Проживає</value>
+  </data>
+  <data name="Status_Occupied" xml:space="preserve">
+    <value>Зайнята</value>
+  </data>
   <data name="Status_Repair" xml:space="preserve">
     <value>На ремонті</value>
   </data>
@@ -425,5 +521,11 @@
   </data>
   <data name="ValidationTitle" xml:space="preserve">
     <value>Помилка валідації</value>
+  </data>
+  <data name="Validation_PassportExists" xml:space="preserve">
+    <value>Гість з таким номером паспорта вже існує.</value>
+  </data>
+  <data name="Validation_PhoneExists" xml:space="preserve">
+    <value>Гість з таким номером телефону вже існує.</value>
   </data>
 </root>

@@ -1,49 +1,60 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Hotel
 {
-    // Статичний клас для доступу до кольорів теми з будь-якого місця програми
     public static class ThemeManager
     {
-        // --- КОЛЬОРИ ДЛЯ КОНТРОЛІВ ---
-
-        // Основний фон програми (був 240, 240, 240)
+        // --- КОЛЬОРИ (як і були) ---
         public static Color FormBackground { get; private set; }
-
-        // Фон для контенту (де UserControl'и) (був White)
         public static Color ContentBackground { get; private set; }
-
-        // Фон лівого меню (був 225, 225, 225)
         public static Color MenuBackground { get; private set; }
-
-        // Колір тексту (для Label, GroupBox)
         public static Color TextColor { get; private set; }
-
-        // Фон для кнопок
         public static Color ButtonBackground { get; private set; }
-
-        // Колір тексту на кнопках
         public static Color ButtonForeColor { get; private set; }
-
-        // Фон для полів вводу (TextBox, ComboBox)
         public static Color InputBackground { get; private set; }
-
-        // Колір тексту в полях вводу
         public static Color InputForeColor { get; private set; }
-
-        // Фон для сіток (DataGridView)
         public static Color GridBackground { get; private set; }
-
-        // Фон заголовків сіток
         public static Color GridHeaderBackground { get; private set; }
-
-        // Колір тексту заголовків сіток
         public static Color GridHeaderForeColor { get; private set; }
 
+        // --- (НОВЕ) ІКОНКИ ---
+        // Ми будемо зберігати завантажені картинки тут
+        public static Image? HomeIcon { get; private set; }
+        public static Image? SettingsIcon { get; private set; }
+        public static Image? LanguageIcon { get; private set; }
+        public static Image? ThemeIcon { get; private set; }
+        public static Image? EyeOpenIcon { get; private set; }
+        public static Image? EyeClosedIcon { get; private set; }
 
-        // --- Метод, який застосовує тему ---
 
+        // (НОВИЙ МЕТОД) Допоміжний метод для завантаження іконок з ресурсів
+        private static Image? LoadImage(string iconName)
+        {
+            try
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                string resourceName = "Hotel.images." + iconName;
+                using (var stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                    {
+                        return Image.FromStream(stream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Якщо іконку не знайдено, це проблема, але програма не має падати
+                Console.WriteLine($"Failed to load icon {iconName}: {ex.Message}");
+            }
+            return null; // Повертаємо null, якщо не вдалося завантажити
+        }
+
+        // (ОНОВЛЕНО) ApplyTheme тепер завантажує і кольори, і іконки
         public static void ApplyTheme(string themeName)
         {
             if (themeName == "Dark")
@@ -60,10 +71,18 @@ namespace Hotel
                 GridBackground = Color.FromArgb(45, 45, 48);
                 GridHeaderBackground = Color.FromArgb(80, 80, 80);
                 GridHeaderForeColor = Color.White;
+
+                // (НОВЕ) Завантажуємо ТЕМНІ іконки
+                HomeIcon = LoadImage("home_dark_icon.png");
+                SettingsIcon = LoadImage("settings_dark_icon.png");
+                LanguageIcon = LoadImage("language_dark_icon.png");
+                ThemeIcon = LoadImage("theme_dark_icon.png");
+                EyeOpenIcon = LoadImage("eye_open_dark_icon.png");
+                EyeClosedIcon = LoadImage("eye_closed_dark_icon.png");
             }
-            else // "Light" або за замовчуванням
+            else // "Light"
             {
-                // === Світла Тема (ваші поточні кольори) ===
+                // === Світла Тема ===
                 FormBackground = Color.FromArgb(240, 240, 240);
                 ContentBackground = Color.White;
                 MenuBackground = Color.FromArgb(225, 225, 225);
@@ -75,6 +94,14 @@ namespace Hotel
                 GridBackground = Color.White;
                 GridHeaderBackground = SystemColors.Control;
                 GridHeaderForeColor = Color.Black;
+
+                // (НОВЕ) Завантажуємо СВІТЛІ (оригінальні) іконки
+                HomeIcon = LoadImage("home_icon.png");
+                SettingsIcon = LoadImage("settings_icon.png");
+                LanguageIcon = LoadImage("language_icon.png");
+                ThemeIcon = LoadImage("theme_icon.png");
+                EyeOpenIcon = LoadImage("eye_open.png");
+                EyeClosedIcon = LoadImage("eye_closed.png");
             }
         }
     }

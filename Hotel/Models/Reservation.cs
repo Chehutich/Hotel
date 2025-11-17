@@ -19,6 +19,11 @@ public partial class Reservation
 
     public int? IdDiscount { get; set; }
 
+    // --- (НОВІ РЯДКИ) ---
+    public decimal? TotalPrice { get; set; }
+    public int? NumberOfGuests { get; set; }
+    // --- (КІНЕЦЬ НОВИХ РЯДКІВ) ---
+
     public virtual Discount? IdDiscountNavigation { get; set; }
 
     public virtual Guest IdGuestNavigation { get; set; } = null!;

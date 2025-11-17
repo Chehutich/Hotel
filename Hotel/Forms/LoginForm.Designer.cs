@@ -1,6 +1,6 @@
 ﻿using Hotel.Localization;
 
-namespace Hotel
+namespace Hotel.Forms
 {
     partial class LoginForm
     {

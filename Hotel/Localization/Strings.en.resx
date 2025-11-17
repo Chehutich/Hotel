@@ -132,6 +132,51 @@
   <data name="AppTitle" xml:space="preserve">
     <value>Hotel Management System</value>
   </data>
+  <data name="Booking_AskCreateGuest_Msg" xml:space="preserve">
+    <value>Guest not found. Do you want to add a new guest now?</value>
+  </data>
+  <data name="Booking_AskCreateGuest_Title" xml:space="preserve">
+    <value>Guest Not Found</value>
+  </data>
+  <data name="Booking_AvailableRooms" xml:space="preserve">
+    <value>Available Rooms:</value>
+  </data>
+  <data name="Booking_CheckIn" xml:space="preserve">
+    <value>Check-In</value>
+  </data>
+  <data name="Booking_CheckOut" xml:space="preserve">
+    <value>Check-Out</value>
+  </data>
+  <data name="Booking_FindGuest" xml:space="preserve">
+    <value>Find Guest</value>
+  </data>
+  <data name="Booking_FindRooms" xml:space="preserve">
+    <value>Find Available Rooms</value>
+  </data>
+  <data name="Booking_GuestInfo" xml:space="preserve">
+    <value>Guest Information</value>
+  </data>
+  <data name="Booking_GuestName" xml:space="preserve">
+    <value>Guest Name:</value>
+  </data>
+  <data name="Booking_GuestNotFound" xml:space="preserve">
+    <value>Guest with this phone number not found.</value>
+  </data>
+  <data name="Booking_NoRoomsFound" xml:space="preserve">
+    <value>Sorry, no available rooms were found for these dates/guest count.</value>
+  </data>
+  <data name="Booking_NumGuests" xml:space="preserve">
+    <value>Number of Guests:</value>
+  </data>
+  <data name="Booking_NumNights" xml:space="preserve">
+    <value>Total Nights: {0}</value>
+  </data>
+  <data name="Booking_SelectRoom" xml:space="preserve">
+    <value>-- Find rooms first --</value>
+  </data>
+  <data name="Booking_TotalPrice" xml:space="preserve">
+    <value>TOTAL PRICE:</value>
+  </data>
   <data name="ButtonCalculate" xml:space="preserve">
     <value>Calculate</value>
   </data>
@@ -153,6 +198,9 @@
   <data name="ButtonSearch" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="Button_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="CalculatePrice" xml:space="preserve">
     <value>Calculate Price</value>
   </data>
@@ -169,7 +217,7 @@
     <value>Date of Birth</value>
   </data>
   <data name="Col_BookingID" xml:space="preserve">
-    <value>Booking ID</value>
+    <value>Booking number</value>
   </data>
   <data name="Col_CheckIn" xml:space="preserve">
     <value>Check-in</value>
@@ -184,7 +232,7 @@
     <value>Guest Name</value>
   </data>
   <data name="Col_ID" xml:space="preserve">
-    <value>ID</value>
+    <value>Guest Number</value>
   </data>
   <data name="Col_IsRegular" xml:space="preserve">
     <value>Regular Guest</value>
@@ -192,11 +240,17 @@
   <data name="Col_LastName" xml:space="preserve">
     <value>Last Name</value>
   </data>
+  <data name="Col_NumGuests" xml:space="preserve">
+    <value>Guests</value>
+  </data>
   <data name="Col_Passport" xml:space="preserve">
     <value>Passport</value>
   </data>
   <data name="Col_Phone" xml:space="preserve">
     <value>Phone</value>
+  </data>
+  <data name="Col_PricePerNight" xml:space="preserve">
+    <value>Price Per Night</value>
   </data>
   <data name="Col_RoomID" xml:space="preserve">
     <value>Room ID</value>
@@ -207,11 +261,44 @@
   <data name="Col_Status" xml:space="preserve">
     <value>Status</value>
   </data>
+  <data name="Dashboard_Available" xml:space="preserve">
+    <value>Available:</value>
+  </data>
+  <data name="Dashboard_CheckIns" xml:space="preserve">
+    <value>Today's Check-Ins ({0})</value>
+  </data>
+  <data name="Dashboard_CheckOuts" xml:space="preserve">
+    <value>Today's Check-Outs ({0})</value>
+  </data>
+  <data name="Dashboard_Cleaning" xml:space="preserve">
+    <value>Cleaning:</value>
+  </data>
+  <data name="Dashboard_Guest" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="Dashboard_Occupied" xml:space="preserve">
+    <value>Occupied:</value>
+  </data>
+  <data name="Dashboard_Repair" xml:space="preserve">
+    <value>Repair:</value>
+  </data>
+  <data name="Dashboard_RoomStatus" xml:space="preserve">
+    <value>Room Status</value>
+  </data>
+  <data name="Dashboard_Title" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="EditGuest_Title" xml:space="preserve">
+    <value>Edit Guest Details</value>
+  </data>
   <data name="English" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="ErrorDBTitle" xml:space="preserve">
     <value>Database Error</value>
+  </data>
+  <data name="Guest_Update_Success" xml:space="preserve">
+    <value>Guest details updated successfully!</value>
   </data>
   <data name="LabelBookingStatus" xml:space="preserve">
     <value>Booking Status:</value>
@@ -393,6 +480,15 @@
   <data name="Status_Cleaning" xml:space="preserve">
     <value>Cleaning</value>
   </data>
+  <data name="Status_Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Status_Living" xml:space="preserve">
+    <value>Living</value>
+  </data>
+  <data name="Status_Occupied" xml:space="preserve">
+    <value>Occupied</value>
+  </data>
   <data name="Status_Repair" xml:space="preserve">
     <value>Under Repair</value>
   </data>
@@ -425,5 +521,11 @@
   </data>
   <data name="ValidationTitle" xml:space="preserve">
     <value>Validation Error</value>
+  </data>
+  <data name="Validation_PassportExists" xml:space="preserve">
+    <value>A guest with this passport ID already exists.</value>
+  </data>
+  <data name="Validation_PhoneExists" xml:space="preserve">
+    <value>A guest with this phone number already exists.</value>
   </data>
 </root>

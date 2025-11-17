@@ -1,4 +1,4 @@
-﻿namespace Hotel
+﻿namespace Hotel.Forms
 {
     partial class Form1
     {
