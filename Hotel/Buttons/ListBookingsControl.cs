@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks; // (Додано для Task)
 using System.Windows.Forms;
 
 namespace Hotel.Buttons
@@ -21,6 +22,7 @@ namespace Hotel.Buttons
 
         private Button btnCheckIn;
         private Button btnCheckOut;
+        private Button btnCancel; // (НОВЕ)
 
         public ListBookingsControl()
         {
@@ -62,10 +64,6 @@ namespace Hotel.Buttons
             };
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
-
-            // (НОВЕ) Живий пошук
-            txtSearch.TextChanged += (s, e) => LoadBookings(txtSearch.Text, cmbSort.SelectedValue as string);
-
             cmbSort = new ComboBox { Width = 200, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
@@ -92,8 +90,12 @@ namespace Hotel.Buttons
             btnCheckIn = new Button { Text = Strings.Booking_CheckIn, Size = new Size(120, 40), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Enabled = false };
             btnCheckOut = new Button { Text = Strings.Booking_CheckOut, Size = new Size(120, 40), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Enabled = false };
 
+            // (НОВЕ) Кнопка Скасувати
+            btnCancel = new Button { Text = Strings.Booking_Cancel, Size = new Size(120, 40), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Enabled = false };
+
             actionsPanel.Controls.Add(btnCheckIn);
             actionsPanel.Controls.Add(btnCheckOut);
+            actionsPanel.Controls.Add(btnCancel); // (ДОДАНО)
 
             dgv = new DataGridView
             {
@@ -130,6 +132,7 @@ namespace Hotel.Buttons
             dgv.SelectionChanged += Dgv_SelectionChanged;
             btnCheckIn.Click += BtnCheckIn_Click;
             btnCheckOut.Click += BtnCheckOut_Click;
+            btnCancel.Click += BtnCancel_Click; // (НОВЕ)
             this.Resize += (sender, e) => CenterControls();
         }
 
@@ -137,6 +140,7 @@ namespace Hotel.Buttons
         {
             btnCheckIn.Enabled = false;
             btnCheckOut.Enabled = false;
+            btnCancel.Enabled = false; // (НОВЕ)
 
             if (dgv.SelectedRows.Count == 0) return;
 
@@ -144,14 +148,56 @@ namespace Hotel.Buttons
             var status = selectedRow.Cells["Status"].Value?.ToString();
             var checkInDate = (DateOnly)selectedRow.Cells["CheckIn"].Value;
 
-            if (status == "підтверджено" && checkInDate <= DateOnly.FromDateTime(DateTime.Now))
+            // Логіка кнопок
+            if (status == "підтверджено")
             {
-                btnCheckIn.Enabled = true;
+                // Можна заселити, якщо настав час
+                if (checkInDate <= DateOnly.FromDateTime(DateTime.Now))
+                {
+                    btnCheckIn.Enabled = true;
+                }
+                // Можна скасувати, поки не заїхав
+                btnCancel.Enabled = true;
             }
 
             if (status == "Проживає")
             {
                 btnCheckOut.Enabled = true;
+            }
+        }
+
+        // (НОВИЙ МЕТОД) Скасування бронювання
+        private async void BtnCancel_Click(object? sender, EventArgs e)
+        {
+            if (dgv.SelectedRows.Count == 0) return;
+
+            var selectedRow = dgv.SelectedRows[0];
+            int bookingId = (int)selectedRow.Cells["BookingId"].Value;
+
+            var confirm = MessageBox.Show(Strings.Booking_CancelConfirm, Strings.Booking_Cancel, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                using (var context = new HotelDbContext())
+                {
+                    var reservation = await context.Reservations.FindAsync(bookingId);
+                    if (reservation != null)
+                    {
+                        // Просто змінюємо статус. Кімната не змінюється (вона і так була "доступна" фізично, але зарезервована логічно)
+                        // Тепер, коли статус "скасовано", AddBookingControl більше не буде вважати цю кімнату зайнятою.
+                        reservation.BookingStatus = "скасовано";
+
+                        await context.SaveChangesAsync();
+                        MessageBox.Show("Бронювання скасовано.", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+
+                await LoadBookings(txtSearch.Text, cmbSort.SelectedValue as string);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Помилка скасування: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

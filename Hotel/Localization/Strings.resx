@@ -141,6 +141,12 @@
   <data name="Booking_AvailableRooms" xml:space="preserve">
     <value>Доступні номери:</value>
   </data>
+  <data name="Booking_Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Booking_CancelConfirm" xml:space="preserve">
+    <value>Ви дійсно хочете скасувати це бронювання?</value>
+  </data>
   <data name="Booking_CheckIn" xml:space="preserve">
     <value>Заселити</value>
   </data>
@@ -476,6 +482,9 @@
   </data>
   <data name="Status_Booking_Confirmed" xml:space="preserve">
     <value>Підтверджено</value>
+  </data>
+  <data name="Status_Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
   </data>
   <data name="Status_Cleaning" xml:space="preserve">
     <value>На прибиранні</value>

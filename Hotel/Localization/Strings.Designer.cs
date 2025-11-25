@@ -133,6 +133,24 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Скасувати.
+        /// </summary>
+        internal static string Booking_Cancel {
+            get {
+                return ResourceManager.GetString("Booking_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ви дійсно хочете скасувати це бронювання?.
+        /// </summary>
+        internal static string Booking_CancelConfirm {
+            get {
+                return ResourceManager.GetString("Booking_CancelConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Заселити.
         /// </summary>
         internal static string Booking_CheckIn {
@@ -1137,6 +1155,15 @@ namespace Hotel.Localization {
         internal static string Status_Booking_Confirmed {
             get {
                 return ResourceManager.GetString("Status_Booking_Confirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Скасовано.
+        /// </summary>
+        internal static string Status_Cancelled {
+            get {
+                return ResourceManager.GetString("Status_Cancelled", resourceCulture);
             }
         }
         

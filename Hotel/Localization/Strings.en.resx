@@ -141,6 +141,12 @@
   <data name="Booking_AvailableRooms" xml:space="preserve">
     <value>Available Rooms:</value>
   </data>
+  <data name="Booking_Cancel" xml:space="preserve">
+    <value>Cancel Booking</value>
+  </data>
+  <data name="Booking_CancelConfirm" xml:space="preserve">
+    <value>Are you sure you want to cancel this booking?</value>
+  </data>
   <data name="Booking_CheckIn" xml:space="preserve">
     <value>Check-In</value>
   </data>
@@ -476,6 +482,9 @@
   </data>
   <data name="Status_Booking_Confirmed" xml:space="preserve">
     <value>Confirmed</value>
+  </data>
+  <data name="Status_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
   </data>
   <data name="Status_Cleaning" xml:space="preserve">
     <value>Cleaning</value>
