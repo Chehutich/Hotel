@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Hotel.Buttons // (Переконайтеся, що namespace правильний)
+namespace Hotel.Buttons
 {
     public class ListRoomsControl : UserControl
     {
@@ -62,6 +62,10 @@ namespace Hotel.Buttons // (Переконайтеся, що namespace прав�
             };
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+
+            // (НОВЕ) Живий пошук
+            txtSearch.TextChanged += (s, e) => LoadRooms(txtSearch.Text, cmbSort.SelectedValue as string);
+
             cmbSort = new ComboBox { Width = 220, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
@@ -123,21 +127,19 @@ namespace Hotel.Buttons // (Переконайтеся, що namespace прав�
             CenterControls();
         }
 
-        // (ПОЧАТОК ЗМІН) --- Логіка LoadRooms оновлена ---
         private async Task LoadRooms(string? searchTerm = null, string? sortBy = null)
         {
             try
             {
                 using (var context = new HotelDbContext())
                 {
-                    // (ЗМІНЕНО) Тепер ми об'єднуємо HotelRooms та HotelTypes
                     var query = from hr in context.HotelRooms
                                 join ht in context.HotelTypes on hr.RoomType equals ht.TypeName
                                 select new
                                 {
                                     hr.IdRooms,
                                     hr.RoomType,
-                                    ht.PricePerNight, // (ДОДАНО)
+                                    ht.PricePerNight,
                                     hr.RoomStatus
                                 };
 
@@ -164,15 +166,13 @@ namespace Hotel.Buttons // (Переконайтеся, що namespace прав�
                     var rooms = await query.ToListAsync();
                     dgv.DataSource = rooms;
 
-                    // (ЗМІНЕНО) Оновлюємо заголовки колонок
                     if (dgv.Columns["IdRooms"] != null) dgv.Columns["IdRooms"].HeaderText = Strings.Col_RoomID;
                     if (dgv.Columns["RoomType"] != null) dgv.Columns["RoomType"].HeaderText = Strings.Col_RoomType;
 
-                    // (ДОДАНО) Нова колонка
                     if (dgv.Columns["PricePerNight"] != null)
                     {
                         dgv.Columns["PricePerNight"].HeaderText = Strings.Col_PricePerNight;
-                        dgv.Columns["PricePerNight"].DefaultCellStyle.Format = "F2"; // Формат (напр. 700.00)
+                        dgv.Columns["PricePerNight"].DefaultCellStyle.Format = "F2";
                     }
 
                     if (dgv.Columns["RoomStatus"] != null) dgv.Columns["RoomStatus"].HeaderText = Strings.Col_Status;
@@ -183,7 +183,6 @@ namespace Hotel.Buttons // (Переконайтеся, що namespace прав�
                 MessageBox.Show($"Помилка завантаження списку кімнат: {ex.Message}", Strings.ErrorDBTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        // (КІНЕЦЬ ЗМІН) -----------------------------------
 
         private void BtnSearch_Click(object? sender, EventArgs e)
         {

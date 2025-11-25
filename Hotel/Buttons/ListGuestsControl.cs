@@ -1,13 +1,13 @@
 ﻿using Hotel.Forms;
 using Hotel.Localization;
 using Hotel.Models;
+using Hotel.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -21,7 +21,6 @@ namespace Hotel.Buttons
         private GroupBox guestBox;
         private Font commonFont = new Font("Segoe UI", 10F);
         private Dictionary<string, string> guestSortOptions;
-
         private Button btnEdit;
 
         public ListGuestsControl()
@@ -65,6 +64,10 @@ namespace Hotel.Buttons
             };
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+
+            // (НОВЕ) Живий пошук: при зміні тексту одразу оновлюємо список
+            txtSearch.TextChanged += (s, e) => LoadGuests(txtSearch.Text, cmbSort.SelectedValue as string);
+
             cmbSort = new ComboBox { Width = 180, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
@@ -116,16 +119,13 @@ namespace Hotel.Buttons
             dgv.RowHeadersDefaultCellStyle.BackColor = ThemeManager.GridHeaderBackground;
             dgv.RowTemplate.Height = 30;
 
-            // (ПОЧАТОК ЗМІН) --- Ось тут виправлення ---
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "IdGuest", // (ДОДАНО ЦЕЙ РЯДОК)
+                Name = "IdGuest",
                 DataPropertyName = "IdGuest",
                 HeaderText = Strings.Col_ID,
                 FillWeight = 50
             });
-            // (КІНЕЦЬ ЗМІН) --------------------------
-
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "GuestFirstName",
@@ -188,7 +188,6 @@ namespace Hotel.Buttons
         {
             if (dgv.SelectedRows.Count == 0) return;
 
-            // Тепер цей рядок спрацює
             int selectedGuestId = (int)dgv.SelectedRows[0].Cells["IdGuest"].Value;
 
             var form1 = this.FindForm() as Form1;

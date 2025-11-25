@@ -62,6 +62,10 @@ namespace Hotel.Buttons
             };
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+
+            // (НОВЕ) Живий пошук
+            txtSearch.TextChanged += (s, e) => LoadBookings(txtSearch.Text, cmbSort.SelectedValue as string);
+
             cmbSort = new ComboBox { Width = 200, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
@@ -85,10 +89,8 @@ namespace Hotel.Buttons
                 Padding = new Padding(0, 0, 0, 10)
             };
 
-            // (ПОЧАТОК ЗМІН) --- Кольори змінено на стандартні ---
             btnCheckIn = new Button { Text = Strings.Booking_CheckIn, Size = new Size(120, 40), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Enabled = false };
             btnCheckOut = new Button { Text = Strings.Booking_CheckOut, Size = new Size(120, 40), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Enabled = false };
-            // (КІНЕЦЬ ЗМІН) -----------------------------------
 
             actionsPanel.Controls.Add(btnCheckIn);
             actionsPanel.Controls.Add(btnCheckOut);
