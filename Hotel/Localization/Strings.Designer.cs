@@ -97,6 +97,24 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Управління цінами.
+        /// </summary>
+        internal static string Admin_Prices {
+            get {
+                return ResourceManager.GetString("Admin_Prices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Управління персоналом.
+        /// </summary>
+        internal static string Admin_Staff {
+            get {
+                return ResourceManager.GetString("Admin_Staff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Система управління готелем.
         /// </summary>
         internal static string AppTitle {
@@ -385,6 +403,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Місткість.
+        /// </summary>
+        internal static string Col_Capacity {
+            get {
+                return ResourceManager.GetString("Col_Capacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Дата заїзду.
         /// </summary>
         internal static string Col_CheckIn {
@@ -439,6 +466,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Посада.
+        /// </summary>
+        internal static string Col_JobTitle {
+            get {
+                return ResourceManager.GetString("Col_JobTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Прізвище.
         /// </summary>
         internal static string Col_LastName {
@@ -484,6 +520,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Ціна.
+        /// </summary>
+        internal static string Col_Price {
+            get {
+                return ResourceManager.GetString("Col_Price", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Ціна за ніч.
         /// </summary>
         internal static string Col_PricePerNight {
@@ -507,6 +552,24 @@ namespace Hotel.Localization {
         internal static string Col_RoomType {
             get {
                 return ResourceManager.GetString("Col_RoomType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ім&apos;я.
+        /// </summary>
+        internal static string Col_StaffName {
+            get {
+                return ResourceManager.GetString("Col_StaffName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Прізвище.
+        /// </summary>
+        internal static string Col_StaffSurname {
+            get {
+                return ResourceManager.GetString("Col_StaffSurname", resourceCulture);
             }
         }
         
@@ -637,6 +700,42 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Посада:.
+        /// </summary>
+        internal static string Label_JobTitle {
+            get {
+                return ResourceManager.GetString("Label_JobTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Пароль:.
+        /// </summary>
+        internal static string Label_Password {
+            get {
+                return ResourceManager.GetString("Label_Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Статус:.
+        /// </summary>
+        internal static string Label_Status {
+            get {
+                return ResourceManager.GetString("Label_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Логін:.
+        /// </summary>
+        internal static string Label_Username {
+            get {
+                return ResourceManager.GetString("Label_Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Статус бронювання:.
         /// </summary>
         internal static string LabelBookingStatus {
@@ -700,6 +799,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Посада:.
+        /// </summary>
+        internal static string LabelJobTitle {
+            get {
+                return ResourceManager.GetString("LabelJobTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Прізвище:.
         /// </summary>
         internal static string LabelLastName {
@@ -723,6 +831,15 @@ namespace Hotel.Localization {
         internal static string LabelPassport {
             get {
                 return ResourceManager.GetString("LabelPassport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Пароль:.
+        /// </summary>
+        internal static string LabelPassword {
+            get {
+                return ResourceManager.GetString("LabelPassword", resourceCulture);
             }
         }
         
@@ -777,6 +894,15 @@ namespace Hotel.Localization {
         internal static string LabelTo {
             get {
                 return ResourceManager.GetString("LabelTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Логін:.
+        /// </summary>
+        internal static string LabelUsername {
+            get {
+                return ResourceManager.GetString("LabelUsername", resourceCulture);
             }
         }
         
@@ -943,6 +1069,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на (залиште пустим, щоб не змінювати).
+        /// </summary>
+        internal static string Msg_PasswordHint {
+            get {
+                return ResourceManager.GetString("Msg_PasswordHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Налаштування мови буде застосовано після перезапуску..
         /// </summary>
         internal static string MsgLanguageRestart {
@@ -966,6 +1101,15 @@ namespace Hotel.Localization {
         internal static string MsgNoDataForReport {
             get {
                 return ResourceManager.GetString("MsgNoDataForReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на (залиште пустим, щоб не змінювати).
+        /// </summary>
+        internal static string MsgPasswordHint {
+            get {
+                return ResourceManager.GetString("MsgPasswordHint", resourceCulture);
             }
         }
         
@@ -1141,6 +1285,33 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на За прізвищем (А-Я).
+        /// </summary>
+        internal static string Sort_Staff_Name_ASC {
+            get {
+                return ResourceManager.GetString("Sort_Staff_Name_ASC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За прізвищем (Я-А).
+        /// </summary>
+        internal static string Sort_Staff_Name_DESC {
+            get {
+                return ResourceManager.GetString("Sort_Staff_Name_DESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За статусом.
+        /// </summary>
+        internal static string Sort_Staff_Status {
+            get {
+                return ResourceManager.GetString("Sort_Staff_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Доступна.
         /// </summary>
         internal static string Status_Available {
@@ -1195,6 +1366,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Звільнено.
+        /// </summary>
+        internal static string Status_Fired {
+            get {
+                return ResourceManager.GetString("Status_Fired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Проживає.
         /// </summary>
         internal static string Status_Living {
@@ -1218,6 +1398,33 @@ namespace Hotel.Localization {
         internal static string Status_Repair {
             get {
                 return ResourceManager.GetString("Status_Repair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на На лікарняному.
+        /// </summary>
+        internal static string Status_Sick {
+            get {
+                return ResourceManager.GetString("Status_Sick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на У відпустці.
+        /// </summary>
+        internal static string Status_Vacation {
+            get {
+                return ResourceManager.GetString("Status_Vacation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Працює.
+        /// </summary>
+        internal static string Status_Working {
+            get {
+                return ResourceManager.GetString("Status_Working", resourceCulture);
             }
         }
         

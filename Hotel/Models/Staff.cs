@@ -15,9 +15,9 @@ public partial class Staff
 
     public string StaffPhoneNumber { get; set; } = null!;
 
-    // --- (ОСЬ НОВІ ПОЛЯ, ЯКІ ПОТРІБНО ДОДАТИ) ---
-
     public string? Username { get; set; }
 
     public string? PasswordHash { get; set; }
+
+    public string Status { get; set; } = "Працює";
 }

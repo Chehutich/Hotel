@@ -204,6 +204,7 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
                 entity.Property(e => e.StaffPhoneNumber).HasMaxLength(15).HasColumnName("staff_phone_number");
                 entity.Property(e => e.Username).HasMaxLength(50).HasColumnName("username");
                 entity.Property(e => e.PasswordHash).HasMaxLength(256).HasColumnName("password_hash");
+                entity.Property(e => e.Status).HasMaxLength(20).HasColumnName("status");
             });
             OnModelCreatingPartial(modelBuilder);
         }

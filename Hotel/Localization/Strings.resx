@@ -129,6 +129,12 @@
   <data name="AddGuestTitle" xml:space="preserve">
     <value>Введіть дані гостя</value>
   </data>
+  <data name="Admin_Prices" xml:space="preserve">
+    <value>Управління цінами</value>
+  </data>
+  <data name="Admin_Staff" xml:space="preserve">
+    <value>Управління персоналом</value>
+  </data>
   <data name="AppTitle" xml:space="preserve">
     <value>Система управління готелем</value>
   </data>
@@ -225,6 +231,9 @@
   <data name="Col_BookingID" xml:space="preserve">
     <value>Номер бронювання</value>
   </data>
+  <data name="Col_Capacity" xml:space="preserve">
+    <value>Місткість</value>
+  </data>
   <data name="Col_CheckIn" xml:space="preserve">
     <value>Дата заїзду</value>
   </data>
@@ -257,6 +266,9 @@
   </data>
   <data name="Col_Phone" xml:space="preserve">
     <value>Телефон</value>
+  </data>
+  <data name="Col_Price" xml:space="preserve">
+    <value>Ціна</value>
   </data>
   <data name="Col_PricePerNight" xml:space="preserve">
     <value>Ціна за ніч</value>
@@ -357,6 +369,15 @@
   <data name="LabelTo" xml:space="preserve">
     <value>По:</value>
   </data>
+  <data name="LabelJobTitle" xml:space="preserve">
+    <value>Посада:</value>
+  </data>
+  <data name="LabelPassword" xml:space="preserve">
+    <value>Пароль:</value>
+  </data>
+  <data name="LabelUsername" xml:space="preserve">
+    <value>Логін:</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Мова</value>
   </data>
@@ -419,6 +440,9 @@
   </data>
   <data name="MsgNoDataForReport" xml:space="preserve">
     <value>Немає даних для генерації звіту.</value>
+  </data>
+  <data name="MsgPasswordHint" xml:space="preserve">
+    <value>(залиште пустим, щоб не змінювати)</value>
   </data>
   <data name="Role_Administrator" xml:space="preserve">
     <value>Адміністратор</value>
@@ -539,5 +563,62 @@
   </data>
   <data name="Validation_PhoneExists" xml:space="preserve">
     <value>Гість з таким номером телефону вже існує.</value>
+  </data>
+	<data name="Admin_Prices" xml:space="preserve">
+    <value>Управління цінами</value>
+  </data>
+	<data name="Admin_Staff" xml:space="preserve">
+    <value>Управління персоналом</value>
+  </data>
+	<data name="Col_Capacity" xml:space="preserve">
+    <value>Місткість</value>
+  </data>
+	<data name="Col_JobTitle" xml:space="preserve">
+    <value>Посада</value>
+  </data>
+	<data name="Col_Price" xml:space="preserve">
+    <value>Ціна</value>
+  </data>
+	<data name="Col_StaffName" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
+	<data name="Col_StaffSurname" xml:space="preserve">
+    <value>Прізвище</value>
+  </data>
+	<data name="Label_JobTitle" xml:space="preserve">
+    <value>Посада:</value>
+  </data>
+	<data name="Label_Password" xml:space="preserve">
+    <value>Пароль:</value>
+  </data>
+	<data name="Label_Status" xml:space="preserve">
+    <value>Статус:</value>
+  </data>
+	<data name="Label_Username" xml:space="preserve">
+    <value>Логін:</value>
+  </data>
+	<data name="Msg_PasswordHint" xml:space="preserve">
+    <value>(залиште пустим, щоб не змінювати)</value>
+  </data>
+	<data name="Sort_Staff_Name_ASC" xml:space="preserve">
+    <value>За прізвищем (А-Я)</value>
+  </data>
+	<data name="Sort_Staff_Name_DESC" xml:space="preserve">
+    <value>За прізвищем (Я-А)</value>
+  </data>
+	<data name="Sort_Staff_Status" xml:space="preserve">
+    <value>За статусом</value>
+  </data>
+	<data name="Status_Fired" xml:space="preserve">
+    <value>Звільнено</value>
+  </data>
+	<data name="Status_Sick" xml:space="preserve">
+    <value>На лікарняному</value>
+  </data>
+	<data name="Status_Vacation" xml:space="preserve">
+    <value>У відпустці</value>
+  </data>
+	<data name="Status_Working" xml:space="preserve">
+    <value>Працює</value>
   </data>
 </root>
