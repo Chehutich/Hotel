@@ -1,4 +1,5 @@
-﻿using Hotel.Forms;
+﻿using Hotel.Core;
+using Hotel.Forms;
 using Hotel.Localization;
 using Hotel.Models;
 using Microsoft.EntityFrameworkCore;

@@ -6,7 +6,8 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Threading.Tasks; // (ДОДАНО)
+using System.Threading.Tasks;
+using Hotel.Core; // (ДОДАНО)
 
 namespace Hotel
 {

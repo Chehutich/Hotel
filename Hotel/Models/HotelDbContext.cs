@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Hotel.Localization; // (ДОДАНО)
-using Hotel.Models; // (ДОДАНО, ЯКЩО DTOs всередині Models)
+using Hotel.Localization;
+using Hotel.Core; 
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 using DotNetEnv;
 
-namespace Hotel.Models // (Переконайтеся, що namespace правильний)
+namespace Hotel.Models
 {
     public partial class HotelDbContext : DbContext
     {
@@ -23,9 +23,9 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
         {
             if (!optionsBuilder.IsConfigured)
             {
-                if (!string.IsNullOrEmpty(AppContext.MasterConnectionString))
+                if (!string.IsNullOrEmpty(HotelAppContext.MasterConnectionString))
                 {
-                    optionsBuilder.UseMySql(AppContext.MasterConnectionString, ServerVersion.AutoDetect(AppContext.MasterConnectionString));
+                    optionsBuilder.UseMySql(HotelAppContext.MasterConnectionString, ServerVersion.AutoDetect(HotelAppContext.MasterConnectionString));
                 }
                 else
                 {
@@ -37,12 +37,15 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
                     var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
                     var connectionString = $"Server={host};Port={port};Database={database};User={user};Password={password};";
-                    AppContext.MasterConnectionString = connectionString;
+
+                    // (ЗМІНЕНО) Використовуємо HotelAppContext
+                    HotelAppContext.MasterConnectionString = connectionString;
                     optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 }
             }
         }
 
+        // ... (весь інший код залишається без змін, просто замініть метод OnConfiguring) ...
         public virtual DbSet<AvailableRoomsPerType> AvailableRoomsPerTypes { get; set; }
         public virtual DbSet<Discount> Discounts { get; set; }
         public virtual DbSet<DiscountUsage> DiscountUsages { get; set; }
@@ -55,18 +58,14 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
         public virtual DbSet<RegularGuestsInformation> RegularGuestsInformations { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<Staff> Staff { get; set; }
-
-        // (ДОДАНО) DbSet для GuestReportDto
         public virtual DbSet<GuestReportDto> GuestReportDtos { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .UseCollation("utf8mb4_0900_ai_ci")
-                .HasCharSet("utf8mb4");
+               .UseCollation("utf8mb4_0900_ai_ci")
+               .HasCharSet("utf8mb4");
 
-            // (НОВЕ) Додаємо DTO як "ключ", щоб EF не скаржився
             modelBuilder.Entity<GuestReportDto>(entity =>
             {
                 entity.HasNoKey();
@@ -128,8 +127,6 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
                 entity.Property(e => e.RoomStatus).HasMaxLength(20).HasColumnName("room_status");
                 entity.Property(e => e.RoomType).HasMaxLength(50).HasColumnName("room_type");
             });
-
-            // --- (ПОЧАТОК ЗМІН) ---
             modelBuilder.Entity<HotelType>(entity =>
             {
                 entity.HasKey(e => e.RoomType).HasName("PRIMARY");
@@ -137,12 +134,8 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
                 entity.Property(e => e.RoomType).HasColumnType("int(11)").HasColumnName("room_type");
                 entity.Property(e => e.PricePerNight).HasPrecision(10, 2).HasColumnName("price_per_night");
                 entity.Property(e => e.TypeName).HasMaxLength(50).HasColumnName("type_name");
-
-                // (ОСЬ РЯДОК, ЯКОГО НЕ ВИСТАЧАЛО)
                 entity.Property(e => e.MaxCapacity).HasColumnType("int(11)").HasColumnName("max_capacity");
             });
-            // --- (КІНЕЦЬ ЗМІН) ---
-
             modelBuilder.Entity<MonthlyBooking>(entity =>
             {
                 entity.HasNoKey().ToView("monthly_bookings");
@@ -184,11 +177,8 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
                 entity.Property(e => e.IdDiscount).HasColumnType("int(11)").HasColumnName("id_discount");
                 entity.Property(e => e.IdGuest).HasColumnType("int(11)").HasColumnName("id_guest");
                 entity.Property(e => e.IdRoom).HasColumnType("int(11)").HasColumnName("id_room");
-
-                // (НОВІ РЯДКИ) Додаємо мапінг для нових колонок
                 entity.Property(e => e.TotalPrice).HasPrecision(10, 2).HasColumnName("total_price");
                 entity.Property(e => e.NumberOfGuests).HasColumnType("int(11)").HasColumnName("number_of_guests");
-
                 entity.HasOne(d => d.IdDiscountNavigation).WithMany(p => p.Reservations).HasForeignKey(d => d.IdDiscount).HasConstraintName("reservation_ibfk_3");
                 entity.HasOne(d => d.IdGuestNavigation).WithMany(p => p.Reservations).HasForeignKey(d => d.IdGuest).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("reservation_ibfk_1");
                 entity.HasOne(d => d.IdRoomNavigation).WithMany(p => p.Reservations).HasForeignKey(d => d.IdRoom).OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("reservation_ibfk_2");
@@ -208,6 +198,7 @@ namespace Hotel.Models // (Переконайтеся, що namespace прави
             });
             OnModelCreatingPartial(modelBuilder);
         }
+
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

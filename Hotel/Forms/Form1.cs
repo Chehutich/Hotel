@@ -1,8 +1,8 @@
 using Hotel.Buttons;
-using Hotel;        // Для AppContext, ThemeManager
+using Hotel.Core;
 using Hotel.Localization;
 using System;
-using System.Collections.Generic; // Для List<>
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +19,6 @@ namespace Hotel.Forms
             InitializeUI();
         }
 
-        // Публічний метод для перемикання екранів (використовується з інших контролів)
         public void ShowControl(Control control)
         {
             pnlContent.Controls.Clear();
@@ -27,13 +26,11 @@ namespace Hotel.Forms
             pnlContent.Controls.Add(control);
         }
 
-        // Спеціальний метод для повернення до списку гостей (наприклад, після редагування)
         public void ShowListGuests()
         {
             ShowControl(new ListGuestsControl());
         }
 
-        // Метод для перекладу назв посад
         private string GetLocalizedRoleName(string dbJobTitle)
         {
             switch (dbJobTitle)
@@ -47,7 +44,6 @@ namespace Hotel.Forms
             }
         }
 
-        // Обробник натискання на індикатор ролі (Вихід)
         private void RoleLabel_Click(object? sender, EventArgs e)
         {
             var result = MessageBox.Show(
@@ -64,14 +60,14 @@ namespace Hotel.Forms
 
         private void InitializeUI()
         {
-            // --- 1. Налаштування форми та заголовка ---
             string userNameDisplay = "Гість";
             string userRoleDisplay = Strings.Role_Unknown;
 
-            if (AppContext.CurrentUser != null)
+            // (ЗМІНЕНО) Використовуємо HotelAppContext
+            if (HotelAppContext.CurrentUser != null)
             {
-                userNameDisplay = $"{AppContext.CurrentUser.StaffFirstName} {AppContext.CurrentUser.StaffLastName}";
-                userRoleDisplay = GetLocalizedRoleName(AppContext.CurrentUser.JobTitle);
+                userNameDisplay = $"{HotelAppContext.CurrentUser.StaffFirstName} {HotelAppContext.CurrentUser.StaffLastName}";
+                userRoleDisplay = GetLocalizedRoleName(HotelAppContext.CurrentUser.JobTitle);
             }
 
             this.Text = $"{Strings.AppTitle} - ({userNameDisplay})";
@@ -80,10 +76,8 @@ namespace Hotel.Forms
             this.BackColor = ThemeManager.FormBackground;
             this.WindowState = FormWindowState.Maximized;
 
-            // Закриваємо весь додаток при закритті головної форми
             this.FormClosed += (sender, e) => Application.Exit();
 
-            // --- 2. Ліва панель (Меню) ---
             var mainLeftContainer = new Panel
             {
                 Dock = DockStyle.Left,
@@ -91,7 +85,6 @@ namespace Hotel.Forms
                 BackColor = ThemeManager.MenuBackground
             };
 
-            // Верхня частина меню (Логотип + Налаштування)
             var homePanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
@@ -101,30 +94,27 @@ namespace Hotel.Forms
                 FlowDirection = FlowDirection.LeftToRight
             };
 
-            // Іконка Home
             var homePictureBox = new PictureBox
             {
                 Size = new Size(45, 45),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Cursor = Cursors.Hand,
-                Image = ThemeManager.HomeIcon // Беремо з менеджера тем
+                Image = ThemeManager.HomeIcon
             };
             homePictureBox.Click += BtnHome_Click;
             homePanel.Controls.Add(homePictureBox);
 
-            // Іконка Налаштувань
             var settingsPictureBox = new PictureBox
             {
                 Size = new Size(45, 45),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Cursor = Cursors.Hand,
                 Margin = new Padding(10, 5, 0, 0),
-                Image = ThemeManager.SettingsIcon // Беремо з менеджера тем
+                Image = ThemeManager.SettingsIcon
             };
             settingsPictureBox.Click += BtnSettings_Click;
             homePanel.Controls.Add(settingsPictureBox);
 
-            // Панель для кнопок навігації
             var buttonFlowPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -138,7 +128,6 @@ namespace Hotel.Forms
 
             this.Controls.Add(mainLeftContainer);
 
-            // --- 3. Права панель (Контент) ---
             pnlContent = new Panel
             {
                 Padding = new Padding(30),
@@ -147,13 +136,8 @@ namespace Hotel.Forms
             };
             this.Controls.Add(pnlContent);
 
-
-            // --- 4. Генерація кнопок ---
-
-            // Використовуємо List, щоб динамічно додавати кнопки
             var buttonList = new List<dynamic>();
 
-            // Стандартні кнопки (для всіх)
             buttonList.Add(new { Text = Strings.CheckAvailability, ClickAction = (Action<object?, EventArgs>)BtnCheckAvailability_Click });
             buttonList.Add(new { Text = Strings.AddGuest, ClickAction = (Action<object?, EventArgs>)BtnAddGuest_Click });
             buttonList.Add(new { Text = Strings.ListGuests, ClickAction = (Action<object?, EventArgs>)BtnListGuests_Click });
@@ -162,14 +146,13 @@ namespace Hotel.Forms
             buttonList.Add(new { Text = Strings.ListBookings, ClickAction = (Action<object?, EventArgs>)BtnListBookings_Click });
             buttonList.Add(new { Text = Strings.UpdateRoomStatus, ClickAction = (Action<object?, EventArgs>)BtnUpdateStatus_Click });
 
-            // Спеціальні кнопки (Тільки для Адміністратора)
-            if (AppContext.CurrentUser != null && AppContext.CurrentUser.JobTitle == "Адміністратор")
+            // (ЗМІНЕНО) Використовуємо HotelAppContext
+            if (HotelAppContext.CurrentUser != null && HotelAppContext.CurrentUser.JobTitle == "Адміністратор")
             {
                 buttonList.Add(new { Text = Strings.Admin_Staff, ClickAction = (Action<object?, EventArgs>)((s, e) => ShowControl(new StaffManagementControl())) });
                 buttonList.Add(new { Text = Strings.Admin_Prices, ClickAction = (Action<object?, EventArgs>)((s, e) => ShowControl(new RoomManagementControl())) });
             }
 
-            // Створюємо та додаємо кнопки на панель
             foreach (var mapping in buttonList)
             {
                 var button = new Button
@@ -182,14 +165,12 @@ namespace Hotel.Forms
                     ForeColor = ThemeManager.ButtonForeColor
                 };
 
-                // (ВИПРАВЛЕННЯ) Явно вказуємо, що ClickAction - це делегат
                 Action<object?, EventArgs> action = mapping.ClickAction;
                 button.Click += (s, e) => action(s, e);
 
                 buttonFlowPanel.Controls.Add(button);
             }
 
-            // --- 5. Індикатор ролі (Кнопка виходу) ---
             var roleLabel = new Label
             {
                 Text = userRoleDisplay,
@@ -205,11 +186,9 @@ namespace Hotel.Forms
 
             buttonFlowPanel.Controls.Add(roleLabel);
 
-            // --- 6. Запуск стартового екрану ---
             this.Load += (sender, e) => ShowControl(new WelcomeControl());
         }
 
-        // Обробники подій для стандартних кнопок
         private void BtnHome_Click(object? sender, EventArgs e) => ShowControl(new WelcomeControl());
         private void BtnCheckAvailability_Click(object? sender, EventArgs e) => ShowControl(new CheckAvailabilityControl());
         private void BtnAddGuest_Click(object? sender, EventArgs e) => ShowControl(new AddGuestControl());

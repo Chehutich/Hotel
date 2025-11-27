@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Hotel.Core;
 
 namespace Hotel.Buttons
 {

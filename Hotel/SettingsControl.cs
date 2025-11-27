@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Hotel.Localization;
+using Hotel.Core;
 
 namespace Hotel
 {

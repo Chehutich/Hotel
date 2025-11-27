@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Threading.Tasks; // (ДОДАНО)
+using System.Threading.Tasks;
+using Hotel.Core; // (ДОДАНО)
 
 namespace Hotel.Buttons
 {

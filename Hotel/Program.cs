@@ -2,9 +2,10 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.IO;
-using System.Windows.Forms; // (Переконайтеся, що цей рядок є)
-using Hotel.Forms;          // (ОСЬ ЦЕЙ РЯДОК ВИРІШУЄ ПРОБЛЕМУ)
-using Hotel.Localization;   // (ДОДАЙТЕ ЦЕЙ РЯДОК)
+using System.Windows.Forms;
+using Hotel.Forms;
+using Hotel.Localization;
+using Hotel.Core; // (ДОДАНО)
 
 namespace Hotel
 {
@@ -16,7 +17,7 @@ namespace Hotel
         [STAThread]
         static void Main()
         {
-            // === КРОК 1: ЗАВАНТАЖЕННЯ .env (для даних про хост/БД) ===
+            // === КРОК 1: ЗАВАНТАЖЕННЯ .env ===
             DotNetEnv.Env.Load(".env");
             try
             {
@@ -30,7 +31,8 @@ namespace Hotel
                 var port = Environment.GetEnvironmentVariable("DB_PORT");
                 var user = Environment.GetEnvironmentVariable("DB_USER");
                 var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-                AppContext.MasterConnectionString = $"Server={host};Port={port};Database={database};User={user};Password={password};";
+
+                HotelAppContext.MasterConnectionString = $"Server={host};Port={port};Database={database};User={user};Password={password};";
             }
             catch (Exception ex)
             {
@@ -38,7 +40,7 @@ namespace Hotel
                 return;
             }
 
-            // === КРОК 2: ВСТАНОВЛЕННЯ МОВИ ===
+            // === КРОК 2: МОВА ===
             string cultureName = "uk-UA";
             try
             {
@@ -60,7 +62,7 @@ namespace Hotel
                 MessageBox.Show($"Error loading/saving language file ({LanguageSettingsFile}): {ex.Message}", "Language Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            // === КРОК 3: ВСТАНОВЛЕННЯ ТЕМИ ===
+            // === КРОК 3: ТЕМА ===
             string themeName = "Light";
             try
             {
@@ -80,18 +82,15 @@ namespace Hotel
                 MessageBox.Show($"Error loading/saving theme file ({ThemeSettingsFile}): {ex.Message}", "Theme Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            // === КРОК 4: ЗАПУСК АВТОРИЗАЦІЇ ===
+            // === КРОК 4: ЗАПУСК ===
             ApplicationConfiguration.Initialize();
 
-            // Тепер Program.cs "бачить" LoginForm, тому що ми додали using Hotel.Forms;
             LoginForm loginForm = new LoginForm();
 
             if (loginForm.ShowDialog() == DialogResult.OK)
             {
-                // І він "бачить" Form1
                 Application.Run(new Form1());
             }
-            // (Якщо не OK, програма просто завершить роботу)
         }
     }
 }

@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Hotel
+namespace Hotel.Core
 {
     public static class ThemeManager
     {

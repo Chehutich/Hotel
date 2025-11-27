@@ -9,7 +9,8 @@ using System.Threading;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using Hotel.Localization; // (ОСЬ ВИПРАВЛЕННЯ)
+using Hotel.Localization;
+using Hotel.Core; // (ДОДАНО)
 
 namespace Hotel.Forms
 {
@@ -21,10 +22,13 @@ namespace Hotel.Forms
         public LoginForm()
         {
             InitializeComponent();
-
             UpdateTheme();
         }
 
+        // ... (методи UpdateTheme, btnTheme_Click, btnLanguage_Click, UpdateLanguage, pbShowPassword_Click, ComputeSha256Hash залишаються без змін) ...
+        // Скопіюйте їх з попереднього файлу, або просто замініть посилання на HotelAppContext в BtnLogin_Click
+
+        // Я наведу тут повний код для зручності:
         private void btnTheme_Click(object? sender, EventArgs e)
         {
             try
@@ -34,7 +38,6 @@ namespace Hotel.Forms
                 {
                     currentTheme = File.ReadAllText(ThemeSettingsFile).Trim();
                 }
-
                 string newTheme = (currentTheme == "Light") ? "Dark" : "Light";
                 File.WriteAllText(ThemeSettingsFile, newTheme);
                 ThemeManager.ApplyTheme(newTheme);
@@ -52,21 +55,15 @@ namespace Hotel.Forms
             this.loginBox.ForeColor = ThemeManager.TextColor;
             this.lblUsername.ForeColor = ThemeManager.TextColor;
             this.lblPassword.ForeColor = ThemeManager.TextColor;
-
             this.txtUsername.BackColor = ThemeManager.InputBackground;
             this.txtUsername.ForeColor = ThemeManager.InputForeColor;
             this.txtPassword.BackColor = ThemeManager.InputBackground;
             this.txtPassword.ForeColor = ThemeManager.InputForeColor;
-
             this.btnLogin.BackColor = ThemeManager.ButtonBackground;
             this.btnLogin.ForeColor = ThemeManager.ButtonForeColor;
-
             this.btnLanguage.Image = ThemeManager.LanguageIcon;
             this.btnTheme.Image = ThemeManager.ThemeIcon;
-
-            this.pbShowPassword.Image = txtPassword.UseSystemPasswordChar ?
-                ThemeManager.EyeClosedIcon :
-                ThemeManager.EyeOpenIcon;
+            this.pbShowPassword.Image = txtPassword.UseSystemPasswordChar ? ThemeManager.EyeClosedIcon : ThemeManager.EyeOpenIcon;
         }
 
         private void btnLanguage_Click(object? sender, EventArgs e)
@@ -87,7 +84,6 @@ namespace Hotel.Forms
 
         private void UpdateLanguage()
         {
-            // Тепер помилок тут не буде, бо "using Hotel.Localization;" додано
             this.Text = Strings.AppTitle;
             this.loginBox.Text = Strings.Login_Title;
             this.lblUsername.Text = Strings.Login_Username;
@@ -147,7 +143,8 @@ namespace Hotel.Forms
 
                     if (staffUser != null)
                     {
-                        AppContext.CurrentUser = staffUser;
+                        // (ЗМІНЕНО) Використовуємо HotelAppContext
+                        HotelAppContext.CurrentUser = staffUser;
                         this.DialogResult = DialogResult.OK;
                         this.Close();
                     }

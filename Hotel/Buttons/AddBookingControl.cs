@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.Common;
+using Hotel.Core;
 
 namespace Hotel.Buttons
 {

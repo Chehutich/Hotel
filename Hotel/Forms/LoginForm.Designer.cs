@@ -1,4 +1,5 @@
-﻿using Hotel.Localization;
+﻿using Hotel.Core;
+using Hotel.Localization;
 
 namespace Hotel.Forms
 {
