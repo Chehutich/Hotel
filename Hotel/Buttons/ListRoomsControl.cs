@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks; // (ДОДАНО)
 
 namespace Hotel.Buttons
 {
@@ -63,7 +64,7 @@ namespace Hotel.Buttons
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (НОВЕ) Живий пошук
+            // Живий пошук
             txtSearch.TextChanged += (s, e) => LoadRooms(txtSearch.Text, cmbSort.SelectedValue as string);
 
             cmbSort = new ComboBox { Width = 220, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
@@ -133,12 +134,14 @@ namespace Hotel.Buttons
             {
                 using (var context = new HotelDbContext())
                 {
+                    // (ЗМІНЕНО) Додаємо MaxCapacity до вибірки
                     var query = from hr in context.HotelRooms
                                 join ht in context.HotelTypes on hr.RoomType equals ht.TypeName
                                 select new
                                 {
                                     hr.IdRooms,
                                     hr.RoomType,
+                                    ht.MaxCapacity,   // (НОВЕ)
                                     ht.PricePerNight,
                                     hr.RoomStatus
                                 };
@@ -166,8 +169,16 @@ namespace Hotel.Buttons
                     var rooms = await query.ToListAsync();
                     dgv.DataSource = rooms;
 
+                    // (ЗМІНЕНО) Оновлюємо заголовки
                     if (dgv.Columns["IdRooms"] != null) dgv.Columns["IdRooms"].HeaderText = Strings.Col_RoomID;
                     if (dgv.Columns["RoomType"] != null) dgv.Columns["RoomType"].HeaderText = Strings.Col_RoomType;
+
+                    // (НОВЕ) Колонка Місткість
+                    if (dgv.Columns["MaxCapacity"] != null)
+                    {
+                        dgv.Columns["MaxCapacity"].HeaderText = Strings.Col_MaxCapacity;
+                        dgv.Columns["MaxCapacity"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    }
 
                     if (dgv.Columns["PricePerNight"] != null)
                     {

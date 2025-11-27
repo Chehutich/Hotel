@@ -246,6 +246,9 @@
   <data name="Col_LastName" xml:space="preserve">
     <value>Last Name</value>
   </data>
+  <data name="Col_MaxCapacity" xml:space="preserve">
+    <value>Maximum number of guests</value>
+  </data>
   <data name="Col_NumGuests" xml:space="preserve">
     <value>Guests</value>
   </data>

@@ -448,6 +448,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Максимальна кількість гостей.
+        /// </summary>
+        internal static string Col_MaxCapacity {
+            get {
+                return ResourceManager.GetString("Col_MaxCapacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Кількість гостей.
         /// </summary>
         internal static string Col_NumGuests {
