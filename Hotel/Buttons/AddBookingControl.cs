@@ -1,4 +1,5 @@
-﻿using Hotel.Forms;
+﻿using Hotel.Core;
+using Hotel.Forms;
 using Hotel.Localization;
 using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
@@ -6,34 +7,42 @@ using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.Common;
-using Hotel.Core;
 
 namespace Hotel.Buttons
 {
     public class AddBookingControl : UserControl
     {
+        // --- Елементи керування ---
         private GroupBox bookingBox;
         private Font commonFont = new Font("Segoe UI", 11F);
         private Font pickerFont = new Font("Segoe UI", 12F);
         private Font totalFont = new Font("Segoe UI", 14F, FontStyle.Bold);
 
+        // Крок 1: Гість
         private TextBox txtPhoneNumber;
         private Button btnFindGuest;
         private Label lblGuestName;
         private NumericUpDown numGuests;
+
+        // Крок 2: Дати
         private DateTimePicker dtpCheckIn, dtpCheckOut;
         private Label lblNumNights;
+
+        // Крок 3: Номери
         private Button btnFindRooms;
         private ComboBox cmbAvailableRooms;
         private Label lblTotalPrice;
+
+        // Крок 4: Збереження
         private Button btnSave;
         private Button btnCancel;
 
+        // --- Змінні для збереження стану ---
         private Guest? currentGuest = null;
         private List<RoomSearchResult> availableRoomsList = new List<RoomSearchResult>();
         private decimal currentTotalPrice = 0;
@@ -72,37 +81,45 @@ namespace Hotel.Buttons
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             layoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
 
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 0: Телефон
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 1: Ім'я гостя
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 2: Кількість гостей
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 3: Дата заїзду
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 4: Дата виїзду (і ночі)
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 5: Кнопка Пошук кімнат
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F)); // 6: ComboBox кімнат
+            layoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F)); // 7: Ціна та кнопки Зберегти
 
+            // --- Ініціалізація елементів ---
+
+            // Крок 1: Гість
             txtPhoneNumber = new TextBox { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             btnFindGuest = new Button { Text = Strings.Booking_FindGuest, Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             lblGuestName = new Label { Text = $"({Strings.Booking_GuestInfo})", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5), ForeColor = ThemeManager.TextColor, Font = new Font(commonFont, FontStyle.Italic) };
             numGuests = new NumericUpDown { Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, Minimum = 1, Maximum = 10, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
+            // Крок 2: Дати
             dtpCheckIn = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
             SetupDatePickerTheme(dtpCheckIn);
             dtpCheckOut = new DateTimePicker { Dock = DockStyle.Fill, Margin = new Padding(5), Font = pickerFont, Format = DateTimePickerFormat.Long };
             SetupDatePickerTheme(dtpCheckOut);
             lblNumNights = new Label { Text = string.Format(Strings.Booking_NumNights, 0), Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Margin = new Padding(5), ForeColor = ThemeManager.TextColor, Font = new Font(commonFont, FontStyle.Bold) };
 
+            // Крок 3: Номери
             btnFindRooms = new Button { Text = Strings.Booking_FindRooms, Dock = DockStyle.Fill, Margin = new Padding(5), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             cmbAvailableRooms = new ComboBox { Dock = DockStyle.Fill, Margin = new Padding(5), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
+            // Ціна
             lblTotalPrice = new Label { Text = $"{Strings.Booking_TotalPrice} 0.00 грн", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, Margin = new Padding(5), Font = totalFont, ForeColor = ThemeManager.TextColor };
 
+            // Крок 4: Збереження
             btnSave = new Button { Text = Strings.ButtonSave, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             btnCancel = new Button { Text = Strings.ButtonCancel, Width = 130, Height = 40, Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var buttonPanel = new FlowLayoutPanel { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill, Padding = new Padding(0, 15, 0, 0) };
             buttonPanel.Controls.Add(btnSave);
             buttonPanel.Controls.Add(btnCancel);
 
+            // --- Розміщення елементів на сітці ---
             layoutPanel.Controls.Add(CreateLabel(Strings.LabelPhoneNumber), 0, 0);
             layoutPanel.Controls.Add(txtPhoneNumber, 1, 0);
             layoutPanel.Controls.Add(btnFindGuest, 2, 0);
@@ -133,9 +150,11 @@ namespace Hotel.Buttons
             layoutPanel.SetColumnSpan(lblTotalPrice, 2);
             layoutPanel.Controls.Add(buttonPanel, 2, 7);
 
+            // --- Додавання та центрування ---
             bookingBox.Controls.Add(layoutPanel);
             this.Controls.Add(bookingBox);
 
+            // --- Обробники подій ---
             btnFindGuest.Click += BtnFindGuest_Click;
             dtpCheckIn.ValueChanged += DatesChanged_ValueChanged;
             dtpCheckOut.ValueChanged += DatesChanged_ValueChanged;
@@ -148,11 +167,14 @@ namespace Hotel.Buttons
             this.Load += (sender, e) => CenterControls();
             this.Resize += (sender, e) => CenterControls();
 
+            // Ініціалізація
             UpdateNightCount();
             ResetRoomSearch();
         }
 
-        // (ЗМІНЕНО) Логіка пошуку гостя
+        // --- ЛОГІКА ---
+
+        // (ЗМІНЕНО) Крок 1: Пошук гостя (Завантажуємо дані про дітей)
         private async void BtnFindGuest_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtPhoneNumber.Text)) return;
@@ -162,6 +184,7 @@ namespace Hotel.Buttons
                 using (var context = new HotelDbContext())
                 {
                     currentGuest = await context.Guests
+                        .Include(g => g.PresenceOfChild) // (НОВЕ) Завантажуємо інформацію про дітей
                         .FirstOrDefaultAsync(g => g.PhoneNumber == txtPhoneNumber.Text);
                 }
 
@@ -176,20 +199,17 @@ namespace Hotel.Buttons
                     lblGuestName.Text = $"({Strings.Booking_GuestNotFound})";
                     lblGuestName.Font = new Font(commonFont, FontStyle.Italic);
 
-                    // (НОВЕ) Запитуємо, чи додати гостя
                     var result = MessageBox.Show(
-                        Strings.Booking_AskCreateGuest_Msg, // "Гостя не знайдено. Додати?"
+                        Strings.Booking_AskCreateGuest_Msg,
                         Strings.Booking_AskCreateGuest_Title,
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question);
 
                     if (result == DialogResult.Yes)
                     {
-                        // Знаходимо Form1
                         var form1 = this.FindForm() as Form1;
                         if (form1 != null)
                         {
-                            // Відкриваємо AddGuestControl, передаючи номер телефону
                             var addGuestControl = new AddGuestControl(txtPhoneNumber.Text);
                             form1.ShowControl(addGuestControl);
                         }
@@ -203,6 +223,7 @@ namespace Hotel.Buttons
             }
         }
 
+        // Крок 2: Оновлення дат
         private void DatesChanged_ValueChanged(object? sender, EventArgs e)
         {
             if (dtpCheckOut.Value <= dtpCheckIn.Value)
@@ -219,6 +240,7 @@ namespace Hotel.Buttons
             lblNumNights.Text = string.Format(Strings.Booking_NumNights, nights);
         }
 
+        // Крок 3: Пошук кімнат
         private async void BtnFindRooms_Click(object? sender, EventArgs e)
         {
             var checkIn = DateOnly.FromDateTime(dtpCheckIn.Value);
@@ -287,6 +309,7 @@ namespace Hotel.Buttons
             UpdateTotalPrice();
         }
 
+        // Крок 4: Розрахунок ціни
         private void CmbAvailableRooms_SelectedIndexChanged(object? sender, EventArgs e)
         {
             UpdateTotalPrice();
@@ -346,6 +369,7 @@ namespace Hotel.Buttons
             }
         }
 
+        // (ЗМІНЕНО) Крок 5: Збереження з визначенням IdDiscount
         private async void BtnSave_Click(object? sender, EventArgs e)
         {
             if (currentGuest == null)
@@ -361,6 +385,26 @@ namespace Hotel.Buttons
                 MessageBox.Show("Не вдалося розрахувати вартість. Перевірте дані.", Strings.ValidationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
             }
 
+            // (НОВЕ) Логіка визначення знижки
+            // (ID знижок беремо з БД: 1 - постійний, 2 - діти)
+            int? discountIdToSave = null;
+
+            // Пріоритет 1: Діти (знижка 10%, ID=2)
+            if (currentGuest.PresenceOfChild != null
+                && currentGuest.PresenceOfChild.ChildrenPresence == true
+                && currentGuest.PresenceOfChild.AgeOfChild <= 12)
+            {
+                discountIdToSave = 2;
+            }
+
+            // Пріоритет 2: Постійний клієнт (знижка 15%, ID=1)
+            // (Переписує попередню, бо 15% > 10%)
+            if (currentGuest.IsRegularGuest == true)
+            {
+                discountIdToSave = 1;
+            }
+
+
             try
             {
                 using (var context = new HotelDbContext())
@@ -374,7 +418,7 @@ namespace Hotel.Buttons
                         CheckOutDate = DateOnly.FromDateTime(dtpCheckOut.Value),
                         BookingStatus = "підтверджено",
                         TotalPrice = currentTotalPrice,
-                        IdDiscount = null
+                        IdDiscount = discountIdToSave // (ЗБЕРІГАЄМО ID ЗНИЖКИ)
                     };
 
                     context.Reservations.Add(newReservation);

@@ -564,61 +564,64 @@
   <data name="Validation_PhoneExists" xml:space="preserve">
     <value>A guest with this phone number already exists.</value>
   </data>
-	<data name="Admin_Prices" xml:space="preserve">
-    <value>Manage Prices</value>
-  </data>
-	<data name="Admin_Staff" xml:space="preserve">
-    <value>Manage Staff</value>
-  </data>
-	<data name="Col_Capacity" xml:space="preserve">
-    <value>Capacity</value>
-  </data>
-	<data name="Col_JobTitle" xml:space="preserve">
+  <data name="Col_JobTitle" xml:space="preserve">
     <value>Job Title</value>
   </data>
-	<data name="Col_Price" xml:space="preserve">
-    <value>Price</value>
-  </data>
-	<data name="Col_StaffName" xml:space="preserve">
+  <data name="Col_StaffName" xml:space="preserve">
     <value>First Name</value>
   </data>
-	<data name="Col_StaffSurname" xml:space="preserve">
+  <data name="Col_StaffSurname" xml:space="preserve">
     <value>Last Name</value>
   </data>
-	<data name="Label_JobTitle" xml:space="preserve">
+  <data name="Label_JobTitle" xml:space="preserve">
     <value>Job Title:</value>
   </data>
-	<data name="Label_Password" xml:space="preserve">
+  <data name="Label_Password" xml:space="preserve">
     <value>Password:</value>
   </data>
-	<data name="Label_Status" xml:space="preserve">
+  <data name="Label_Status" xml:space="preserve">
     <value>Status:</value>
   </data>
-	<data name="Label_Username" xml:space="preserve">
+  <data name="Label_Username" xml:space="preserve">
     <value>Username:</value>
   </data>
-	<data name="Msg_PasswordHint" xml:space="preserve">
+  <data name="Msg_PasswordHint" xml:space="preserve">
     <value>(leave empty to keep unchanged)</value>
   </data>
-	<data name="Sort_Staff_Name_ASC" xml:space="preserve">
+  <data name="Sort_Staff_Name_ASC" xml:space="preserve">
     <value>By Last Name (A-Z)</value>
   </data>
-	<data name="Sort_Staff_Name_DESC" xml:space="preserve">
+  <data name="Sort_Staff_Name_DESC" xml:space="preserve">
     <value>By Last Name (Z-A)</value>
   </data>
-	<data name="Sort_Staff_Status" xml:space="preserve">
+  <data name="Sort_Staff_Status" xml:space="preserve">
     <value>By Status</value>
   </data>
-	<data name="Status_Fired" xml:space="preserve">
+  <data name="Status_Fired" xml:space="preserve">
     <value>Fired</value>
   </data>
-	<data name="Status_Sick" xml:space="preserve">
+  <data name="Status_Sick" xml:space="preserve">
     <value>Sick Leave</value>
   </data>
-	<data name="Status_Vacation" xml:space="preserve">
+  <data name="Status_Vacation" xml:space="preserve">
     <value>On Vacation</value>
   </data>
-	<data name="Status_Working" xml:space="preserve">
+  <data name="Status_Working" xml:space="preserve">
     <value>Working</value>
+  </data>
+  <data name="Dashboard_RevenueToday" xml:space="preserve">
+    <value>Revenue Today</value>
+  </data>
+  <data name="Dashboard_RevenueMonth" xml:space="preserve">
+    <value>Revenue This Month</value>
+  </data>
+  <data name="Dashboard_Occupancy" xml:space="preserve">
+    <value>Occupancy Rate</value>
+  </data>
+  <data name="Dashboard_ActiveStaff" xml:space="preserve">
+    <value>Active Staff</value>
+  </data>
+  <data name="Dashboard_PopularRooms" xml:space="preserve">
+    <value>Room Popularity</value>
   </data>
 </root>

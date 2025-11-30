@@ -564,61 +564,64 @@
   <data name="Validation_PhoneExists" xml:space="preserve">
     <value>Гість з таким номером телефону вже існує.</value>
   </data>
-	<data name="Admin_Prices" xml:space="preserve">
-    <value>Управління цінами</value>
-  </data>
-	<data name="Admin_Staff" xml:space="preserve">
-    <value>Управління персоналом</value>
-  </data>
-	<data name="Col_Capacity" xml:space="preserve">
-    <value>Місткість</value>
-  </data>
-	<data name="Col_JobTitle" xml:space="preserve">
+  <data name="Col_JobTitle" xml:space="preserve">
     <value>Посада</value>
   </data>
-	<data name="Col_Price" xml:space="preserve">
-    <value>Ціна</value>
-  </data>
-	<data name="Col_StaffName" xml:space="preserve">
+  <data name="Col_StaffName" xml:space="preserve">
     <value>Ім'я</value>
   </data>
-	<data name="Col_StaffSurname" xml:space="preserve">
+  <data name="Col_StaffSurname" xml:space="preserve">
     <value>Прізвище</value>
   </data>
-	<data name="Label_JobTitle" xml:space="preserve">
+  <data name="Label_JobTitle" xml:space="preserve">
     <value>Посада:</value>
   </data>
-	<data name="Label_Password" xml:space="preserve">
+  <data name="Label_Password" xml:space="preserve">
     <value>Пароль:</value>
   </data>
-	<data name="Label_Status" xml:space="preserve">
+  <data name="Label_Status" xml:space="preserve">
     <value>Статус:</value>
   </data>
-	<data name="Label_Username" xml:space="preserve">
+  <data name="Label_Username" xml:space="preserve">
     <value>Логін:</value>
   </data>
-	<data name="Msg_PasswordHint" xml:space="preserve">
+  <data name="Msg_PasswordHint" xml:space="preserve">
     <value>(залиште пустим, щоб не змінювати)</value>
   </data>
-	<data name="Sort_Staff_Name_ASC" xml:space="preserve">
+  <data name="Sort_Staff_Name_ASC" xml:space="preserve">
     <value>За прізвищем (А-Я)</value>
   </data>
-	<data name="Sort_Staff_Name_DESC" xml:space="preserve">
+  <data name="Sort_Staff_Name_DESC" xml:space="preserve">
     <value>За прізвищем (Я-А)</value>
   </data>
-	<data name="Sort_Staff_Status" xml:space="preserve">
+  <data name="Sort_Staff_Status" xml:space="preserve">
     <value>За статусом</value>
   </data>
-	<data name="Status_Fired" xml:space="preserve">
+  <data name="Status_Fired" xml:space="preserve">
     <value>Звільнено</value>
   </data>
-	<data name="Status_Sick" xml:space="preserve">
+  <data name="Status_Sick" xml:space="preserve">
     <value>На лікарняному</value>
   </data>
-	<data name="Status_Vacation" xml:space="preserve">
+  <data name="Status_Vacation" xml:space="preserve">
     <value>У відпустці</value>
   </data>
-	<data name="Status_Working" xml:space="preserve">
+  <data name="Status_Working" xml:space="preserve">
     <value>Працює</value>
+  </data>
+  <data name="Dashboard_RevenueToday" xml:space="preserve">
+    <value>Виручка за сьогодні</value>
+  </data>
+  <data name="Dashboard_RevenueMonth" xml:space="preserve">
+    <value>Виручка за місяць</value>
+  </data>
+  <data name="Dashboard_Occupancy" xml:space="preserve">
+    <value>Завантаженість</value>
+  </data>
+  <data name="Dashboard_ActiveStaff" xml:space="preserve">
+    <value>Працюючий персонал</value>
+  </data>
+  <data name="Dashboard_PopularRooms" xml:space="preserve">
+    <value>Популярність номерів</value>
   </data>
 </root>

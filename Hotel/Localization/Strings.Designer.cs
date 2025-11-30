@@ -583,6 +583,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Працюючий персонал.
+        /// </summary>
+        internal static string Dashboard_ActiveStaff {
+            get {
+                return ResourceManager.GetString("Dashboard_ActiveStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Доступно:.
         /// </summary>
         internal static string Dashboard_Available {
@@ -628,6 +637,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Завантаженість.
+        /// </summary>
+        internal static string Dashboard_Occupancy {
+            get {
+                return ResourceManager.GetString("Dashboard_Occupancy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Зайнято:.
         /// </summary>
         internal static string Dashboard_Occupied {
@@ -637,11 +655,38 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Популярність номерів.
+        /// </summary>
+        internal static string Dashboard_PopularRooms {
+            get {
+                return ResourceManager.GetString("Dashboard_PopularRooms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на На ремонті:.
         /// </summary>
         internal static string Dashboard_Repair {
             get {
                 return ResourceManager.GetString("Dashboard_Repair", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Виручка за місяць.
+        /// </summary>
+        internal static string Dashboard_RevenueMonth {
+            get {
+                return ResourceManager.GetString("Dashboard_RevenueMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Виручка за сьогодні.
+        /// </summary>
+        internal static string Dashboard_RevenueToday {
+            get {
+                return ResourceManager.GetString("Dashboard_RevenueToday", resourceCulture);
             }
         }
         

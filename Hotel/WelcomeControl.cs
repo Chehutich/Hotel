@@ -1,37 +1,66 @@
-﻿using Hotel.Forms;
+﻿using Hotel.Core; // Для HotelAppContext, ThemeManager
+using Hotel.Forms;
 using Hotel.Localization;
 using Hotel.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using System.Threading.Tasks;
-using Hotel.Core; // (ДОДАНО)
+using System.Windows.Forms;
 
 namespace Hotel
 {
     public class WelcomeControl : UserControl
     {
+        // Загальні
         private GroupBox dashBox;
+        private Font commonFont = new Font("Segoe UI", 10F);
+        private Font boldFont = new Font("Segoe UI", 11F, FontStyle.Bold);
+        private Font titleFont = new Font("Segoe UI", 16F, FontStyle.Bold);
+
+        // Елементи Рецепціоніста
         private GroupBox checkInBox, checkOutBox, roomStatusBox;
         private DataGridView dgvCheckIns, dgvCheckOuts;
         private Label lblAvailable, lblOccupied, lblCleaning, lblRepair;
-        private Font commonFont = new Font("Segoe UI", 10F);
-        private Font boldFont = new Font("Segoe UI", 11F, FontStyle.Bold);
+
+        // Елементи Адміністратора
+        private Label lblRevenueToday, lblRevenueMonth, lblOccupancy;
+        private DataGridView dgvPopularRooms, dgvActiveStaff;
+        private GroupBox statsBox, staffBox;
 
         public WelcomeControl()
         {
-            InitializeDashboard();
+            if (HotelAppContext.CurrentUser != null && HotelAppContext.CurrentUser.JobTitle == "Адміністратор")
+            {
+                InitializeAdminDashboard();
+            }
+            else
+            {
+                InitializeReceptionistDashboard();
+            }
+
             this.Load += WelcomeControl_Load;
+            this.Resize += (sender, e) => CenterControls();
         }
 
         private async void WelcomeControl_Load(object? sender, EventArgs e)
         {
-            await LoadDashboardData();
+            if (HotelAppContext.CurrentUser != null && HotelAppContext.CurrentUser.JobTitle == "Адміністратор")
+            {
+                await LoadAdminData();
+            }
+            else
+            {
+                await LoadReceptionistData();
+            }
+            CenterControls();
         }
 
-        private void InitializeDashboard()
+        // ==========================================
+        //           ЛОГІКА РЕЦЕПЦІОНІСТА
+        // ==========================================
+        private void InitializeReceptionistDashboard()
         {
             this.BackColor = ThemeManager.ContentBackground;
 
@@ -57,6 +86,7 @@ namespace Hotel
             mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
 
+            // 1. Check-Ins
             checkInBox = new GroupBox
             {
                 Text = string.Format(Strings.Dashboard_CheckIns, 0),
@@ -68,6 +98,7 @@ namespace Hotel
             dgvCheckIns = CreateStandardDataGridView();
             checkInBox.Controls.Add(dgvCheckIns);
 
+            // 2. Check-Outs
             checkOutBox = new GroupBox
             {
                 Text = string.Format(Strings.Dashboard_CheckOuts, 0),
@@ -79,6 +110,7 @@ namespace Hotel
             dgvCheckOuts = CreateStandardDataGridView();
             checkOutBox.Controls.Add(dgvCheckOuts);
 
+            // 3. Статус кімнат
             roomStatusBox = new GroupBox
             {
                 Text = Strings.Dashboard_RoomStatus,
@@ -91,12 +123,10 @@ namespace Hotel
             statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
             statusLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40F));
 
-            // (ПОЧАТОК ЗМІН) --- Прибираємо кольори ---
             lblAvailable = CreateStatusLabel();
             lblOccupied = CreateStatusLabel();
             lblCleaning = CreateStatusLabel();
             lblRepair = CreateStatusLabel();
-            // (КІНЕЦЬ ЗМІН) --------------------------
 
             statusLayout.Controls.Add(CreateStatusHeader(Strings.Dashboard_Available), 0, 0);
             statusLayout.Controls.Add(lblAvailable, 1, 0);
@@ -114,20 +144,15 @@ namespace Hotel
 
             dashBox.Controls.Add(mainLayout);
             this.Controls.Add(dashBox);
-
-            this.Resize += (sender, e) => CenterControls();
-            CenterControls();
         }
 
-        private async Task LoadDashboardData()
+        private async Task LoadReceptionistData()
         {
             var today = DateOnly.FromDateTime(DateTime.Now);
-
             try
             {
                 using (var context = new HotelDbContext())
                 {
-                    // --- 1. Запит Check-Ins ---
                     var checkIns = await context.Reservations
                         .Include(r => r.IdGuestNavigation)
                         .Where(r => r.BookingStatus == "підтверджено" && r.CheckInDate == today)
@@ -135,39 +160,32 @@ namespace Hotel
                             Гість = r.IdGuestNavigation.GuestFirstName + " " + r.IdGuestNavigation.GuestLastName,
                             Кімната = r.IdRoom,
                             Гостей = r.NumberOfGuests
-                        })
-                        .ToListAsync();
+                        }).ToListAsync();
 
                     dgvCheckIns.DataSource = checkIns;
                     checkInBox.Text = string.Format(Strings.Dashboard_CheckIns, checkIns.Count);
+                    if (dgvCheckIns.Columns.Contains("Кімната")) dgvCheckIns.Columns["Кімната"].FillWeight = 40;
+
                     if (dgvCheckIns.Columns.Contains("Гість")) dgvCheckIns.Columns["Гість"].HeaderText = Strings.Dashboard_Guest;
                     if (dgvCheckIns.Columns.Contains("Кімната")) dgvCheckIns.Columns["Кімната"].HeaderText = Strings.Col_RoomID;
                     if (dgvCheckIns.Columns.Contains("Гостей")) dgvCheckIns.Columns["Гостей"].HeaderText = Strings.Col_NumGuests;
 
-                    if (dgvCheckIns.Columns.Contains("Кімната")) dgvCheckIns.Columns["Кімната"].FillWeight = 50;
-                    if (dgvCheckIns.Columns.Contains("Гостей")) dgvCheckIns.Columns["Гостей"].FillWeight = 50;
-
-
-                    // --- 2. Запит Check-Outs ---
                     var checkOuts = await context.Reservations
                         .Include(r => r.IdGuestNavigation)
                         .Where(r => r.BookingStatus == "Проживає" && r.CheckOutDate == today)
                         .Select(r => new {
                             Гість = r.IdGuestNavigation.GuestFirstName + " " + r.IdGuestNavigation.GuestLastName,
                             Кімната = r.IdRoom
-                        })
-                        .ToListAsync();
+                        }).ToListAsync();
 
                     dgvCheckOuts.DataSource = checkOuts;
                     checkOutBox.Text = string.Format(Strings.Dashboard_CheckOuts, checkOuts.Count);
+                    if (dgvCheckOuts.Columns.Contains("Кімната")) dgvCheckOuts.Columns["Кімната"].FillWeight = 40;
+
                     if (dgvCheckOuts.Columns.Contains("Гість")) dgvCheckOuts.Columns["Гість"].HeaderText = Strings.Dashboard_Guest;
                     if (dgvCheckOuts.Columns.Contains("Кімната")) dgvCheckOuts.Columns["Кімната"].HeaderText = Strings.Col_RoomID;
 
-                    if (dgvCheckOuts.Columns.Contains("Кімната")) dgvCheckOuts.Columns["Кімната"].FillWeight = 50;
-
-                    // --- 3. Запит Статусу Кімнат ---
-                    var roomStats = await context.HotelRooms
-                        .AsNoTracking()
+                    var roomStats = await context.HotelRooms.AsNoTracking()
                         .GroupBy(r => r.RoomStatus)
                         .Select(g => new { Status = g.Key, Count = g.Count() })
                         .ToListAsync();
@@ -178,10 +196,149 @@ namespace Hotel
                     lblRepair.Text = roomStats.FirstOrDefault(s => s.Status == "на ремонті")?.Count.ToString() ?? "0";
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) { ShowErrorLabel(this, ex.Message); }
+        }
+
+        // ==========================================
+        //           ЛОГІКА АДМІНІСТРАТОРА
+        // ==========================================
+        private void InitializeAdminDashboard()
+        {
+            this.BackColor = ThemeManager.ContentBackground;
+
+            dashBox = new GroupBox
             {
-                ShowErrorLabel(this, $"Помилка завантаження панелі: {ex.Message}");
+                Text = "Панель Адміністратора",
+                Dock = DockStyle.None,
+                Width = 1100,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                Padding = new Padding(15),
+                ForeColor = ThemeManager.TextColor
+            };
+
+            var mainLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+                ColumnCount = 2
+            };
+            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
+            mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+
+            var kpiPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 1 };
+            kpiPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
+            kpiPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
+            kpiPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
+
+            lblRevenueToday = CreateKpiCard(Strings.Dashboard_RevenueToday, "0.00 ₴", Color.LightGreen);
+            lblRevenueMonth = CreateKpiCard(Strings.Dashboard_RevenueMonth, "0.00 ₴", Color.LightSkyBlue);
+            lblOccupancy = CreateKpiCard(Strings.Dashboard_Occupancy, "0%", Color.Orange);
+
+            kpiPanel.Controls.Add(lblRevenueToday, 0, 0);
+            kpiPanel.Controls.Add(lblRevenueMonth, 1, 0);
+            kpiPanel.Controls.Add(lblOccupancy, 2, 0);
+
+            mainLayout.Controls.Add(kpiPanel, 0, 0);
+            mainLayout.SetColumnSpan(kpiPanel, 2);
+
+            statsBox = new GroupBox
+            {
+                Text = Strings.Dashboard_PopularRooms,
+                Dock = DockStyle.Fill,
+                Font = boldFont,
+                ForeColor = ThemeManager.TextColor
+            };
+            dgvPopularRooms = CreateStandardDataGridView();
+            statsBox.Controls.Add(dgvPopularRooms);
+            mainLayout.Controls.Add(statsBox, 0, 1);
+
+            staffBox = new GroupBox
+            {
+                Text = Strings.Dashboard_ActiveStaff,
+                Dock = DockStyle.Fill,
+                Font = boldFont,
+                ForeColor = ThemeManager.TextColor
+            };
+            dgvActiveStaff = CreateStandardDataGridView();
+            staffBox.Controls.Add(dgvActiveStaff);
+            mainLayout.Controls.Add(staffBox, 1, 1);
+
+            dashBox.Controls.Add(mainLayout);
+            this.Controls.Add(dashBox);
+        }
+
+        private async Task LoadAdminData()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var firstDayOfMonth = new DateOnly(today.Year, today.Month, 1);
+
+            try
+            {
+                using (var context = new HotelDbContext())
+                {
+                    var todayRevenue = await context.Reservations
+                        .Where(r => r.CheckInDate == today && r.BookingStatus != "скасовано")
+                        .SumAsync(r => r.TotalPrice ?? 0);
+                    lblRevenueToday.Text = $"{todayRevenue:N0} ₴\n{Strings.Dashboard_RevenueToday}";
+
+                    var monthRevenue = await context.Reservations
+                        .Where(r => r.CheckInDate >= firstDayOfMonth && r.BookingStatus != "скасовано")
+                        .SumAsync(r => r.TotalPrice ?? 0);
+                    lblRevenueMonth.Text = $"{monthRevenue:N0} ₴\n{Strings.Dashboard_RevenueMonth}";
+
+                    int totalRooms = await context.HotelRooms.CountAsync();
+                    int occupiedRooms = await context.HotelRooms.CountAsync(r => r.RoomStatus == "Зайнята");
+                    double occupancy = totalRooms > 0 ? (double)occupiedRooms / totalRooms * 100 : 0;
+                    lblOccupancy.Text = $"{occupancy:F1}%\n{Strings.Dashboard_Occupancy}";
+
+                    var popularRooms = await context.Reservations
+                        .Include(r => r.IdRoomNavigation)
+                        .GroupBy(r => r.IdRoomNavigation.RoomType)
+                        .Select(g => new { Тип = g.Key, Бронювань = g.Count() })
+                        .OrderByDescending(x => x.Бронювань)
+                        .Take(5)
+                        .ToListAsync();
+                    dgvPopularRooms.DataSource = popularRooms;
+
+                    // (ЗМІНЕНО) Property "Ім_я" залишається для створення об'єкту
+                    var activeStaff = await context.Staff
+                        .Where(s => s.Status == "Працює")
+                        .Select(s => new {
+                            Ім_я = s.StaffFirstName + " " + s.StaffLastName,
+                            Посада = s.JobTitle,
+                            Телефон = s.StaffPhoneNumber
+                        })
+                        .ToListAsync();
+                    dgvActiveStaff.DataSource = activeStaff;
+
+                    // (НОВЕ) Ось тут ми вручну змінюємо заголовок "Ім_я" на "Ім'я" (або First Name)
+                    if (dgvActiveStaff.Columns.Contains("Ім_я")) dgvActiveStaff.Columns["Ім_я"].HeaderText = Strings.Col_StaffName; // Беремо з ресурсів
+                    if (dgvActiveStaff.Columns.Contains("Посада")) dgvActiveStaff.Columns["Посада"].HeaderText = Strings.Col_JobTitle;
+                    if (dgvActiveStaff.Columns.Contains("Телефон")) dgvActiveStaff.Columns["Телефон"].HeaderText = Strings.Col_Phone;
+                }
             }
+            catch (Exception ex) { ShowErrorLabel(this, "Error loading dashboard: " + ex.Message); }
+        }
+
+        // --- ДОПОМІЖНІ МЕТОДИ ---
+
+        private Label CreateKpiCard(string title, string value, Color bgColor)
+        {
+            var lbl = new Label
+            {
+                Text = value + "\n" + title,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = titleFont,
+                BackColor = ThemeManager.InputBackground,
+                ForeColor = ThemeManager.TextColor,
+                Margin = new Padding(10),
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            return lbl;
         }
 
         private DataGridView CreateStandardDataGridView()
@@ -218,17 +375,15 @@ namespace Hotel
             TextAlign = ContentAlignment.MiddleRight
         };
 
-        // (ПОЧАТОК ЗМІН) --- Прибираємо 'Color color' ---
         private Label CreateStatusLabel() => new Label
         {
             Text = "0",
             Dock = DockStyle.Fill,
             Font = new Font(boldFont, FontStyle.Bold),
-            ForeColor = ThemeManager.TextColor, // (ЗМІНЕНО)
+            ForeColor = ThemeManager.TextColor,
             TextAlign = ContentAlignment.MiddleLeft,
             Margin = new Padding(10, 0, 0, 0)
         };
-        // (КІНЕЦЬ ЗМІН) --------------------------
 
         private void CenterControls()
         {
