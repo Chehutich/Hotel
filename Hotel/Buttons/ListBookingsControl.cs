@@ -27,11 +27,16 @@ namespace Hotel.Buttons
 
         public ListBookingsControl()
         {
+            // (ЗМІНЕНО) Додано нові опції сортування
             bookingSortOptions = new Dictionary<string, string>
             {
                 { "Date_DESC", Strings.Sort_Booking_Date_DESC },
                 { "Date_ASC", Strings.Sort_Booking_Date_ASC },
-                { "ID_ASC", Strings.Sort_Booking_ID }
+                { "ID_ASC", Strings.Sort_Booking_ID },
+                { "Status_Confirmed", Strings.Sort_Booking_Status_Confirmed },
+                { "Status_Living", Strings.Sort_Booking_Status_Living },
+                { "Status_Completed", Strings.Sort_Booking_Status_Completed },
+                { "Status_Cancelled", Strings.Sort_Booking_Status_Cancelled }
             };
 
             bookingBox = new GroupBox
@@ -66,10 +71,10 @@ namespace Hotel.Buttons
 
             txtSearch = new TextBox { Width = 200, Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
 
-            // (ПОВЕРНУТО) Живий пошук
+            // Живий пошук
             txtSearch.TextChanged += (s, e) => LoadBookings(txtSearch.Text, cmbSort.SelectedValue as string);
 
-            cmbSort = new ComboBox { Width = 200, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
+            cmbSort = new ComboBox { Width = 250, Margin = new Padding(3), DropDownStyle = ComboBoxStyle.DropDownList, Font = commonFont, BackColor = ThemeManager.InputBackground, ForeColor = ThemeManager.InputForeColor };
             var btnSearch = new Button { Text = Strings.ButtonSearch, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
             var btnReset = new Button { Text = Strings.ButtonReset, Size = new Size(100, 35), Margin = new Padding(3), Font = commonFont, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor };
 
@@ -294,6 +299,7 @@ namespace Hotel.Buttons
             CenterControls();
         }
 
+        // (ЗМІНЕНО) Додано логіку для нових статусів
         private async Task LoadBookings(string? searchTerm = null, string? sortBy = null)
         {
             try
@@ -318,6 +324,21 @@ namespace Hotel.Buttons
                         case "Date_DESC": query = query.OrderByDescending(r => r.CheckInDate); break;
                         case "Date_ASC": query = query.OrderBy(r => r.CheckInDate); break;
                         case "ID_ASC": query = query.OrderBy(r => r.IdBooking); break;
+
+                        // (НОВІ КЕЙСИ) Сортуємо так, щоб потрібний статус був зверху
+                        case "Status_Confirmed":
+                            query = query.OrderBy(r => r.BookingStatus != "підтверджено").ThenBy(r => r.CheckInDate);
+                            break;
+                        case "Status_Living":
+                            query = query.OrderBy(r => r.BookingStatus != "Проживає").ThenBy(r => r.CheckInDate);
+                            break;
+                        case "Status_Completed":
+                            query = query.OrderBy(r => r.BookingStatus != "Завершено").ThenByDescending(r => r.CheckOutDate);
+                            break;
+                        case "Status_Cancelled":
+                            query = query.OrderBy(r => r.BookingStatus != "скасовано").ThenByDescending(r => r.CheckInDate);
+                            break;
+
                         default: query = query.OrderByDescending(r => r.CheckInDate); break;
                     }
 

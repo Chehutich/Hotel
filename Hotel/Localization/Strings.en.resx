@@ -624,4 +624,19 @@
   <data name="Dashboard_PopularRooms" xml:space="preserve">
     <value>Room Popularity</value>
   </data>
+	<data name="Sort_Booking_Status_Cancelled" xml:space="preserve">
+    <value>By Status (Cancelled first)</value>
+  </data>
+	<data name="Sort_Booking_Status_Completed" xml:space="preserve">
+    <value>By Status (Completed first)</value>
+  </data>
+	<data name="Sort_Booking_Status_Confirmed" xml:space="preserve">
+    <value>By Status (Confirmed first)</value>
+  </data>
+	<data name="Sort_Booking_Status_Living" xml:space="preserve">
+    <value>By Status (Living first)</value>
+  </data>
+	<data name="Button_New" xml:space="preserve">
+    <value>+ New</value>
+  </data>
 </root>

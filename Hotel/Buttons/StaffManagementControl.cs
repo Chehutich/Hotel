@@ -24,7 +24,7 @@ namespace Hotel.Buttons
         private TextBox txtFirstName, txtLastName, txtPhone, txtUsername, txtPassword;
         private ComboBox cmbJobTitle;
         private ComboBox cmbStatus;
-        private Button btnSave, btnClear;
+        private Button btnSave, btnClear, btnDelete, btnNew;
 
         private Font commonFont = new Font("Segoe UI", 10F);
         private int? editingStaffId = null;
@@ -130,13 +130,11 @@ namespace Hotel.Buttons
             leftPanel.Controls.Add(dgv, 0, 1);
 
             // --- ПРАВА ЧАСТИНА ---
-
-            // (ЗМІНЕНО) Додано великий відступ зліва (40px), щоб посунути форму до центру
             var formPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.TopDown,
-                Padding = new Padding(40, 20, 10, 10) // (ОСЬ ТУТ ЗМІНА)
+                Padding = new Padding(40, 20, 10, 10)
             };
 
             txtFirstName = CreateInput();
@@ -153,11 +151,18 @@ namespace Hotel.Buttons
             cmbStatus.DataSource = new BindingSource(statusOptions, null);
             cmbStatus.DisplayMember = "Value"; cmbStatus.ValueMember = "Key";
 
+            // (ЗМІНЕНО) Прибрано зелений колір, тепер береться з теми
+            btnNew = new Button { Text = Strings.Button_New, Width = 120, Height = 40, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Font = commonFont };
+            btnNew.Click += (s, e) => ClearForm();
+
             btnSave = new Button { Text = Strings.ButtonSave, Width = 120, Height = 40, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Font = commonFont };
             btnSave.Click += BtnSave_Click;
 
             btnClear = new Button { Text = Strings.ButtonClear, Width = 120, Height = 40, BackColor = ThemeManager.ButtonBackground, ForeColor = ThemeManager.ButtonForeColor, Font = commonFont };
             btnClear.Click += (s, e) => ClearForm();
+
+            btnDelete = new Button { Text = "Видалити", Width = 120, Height = 40, BackColor = Color.IndianRed, ForeColor = Color.White, Font = commonFont, Enabled = false };
+            btnDelete.Click += BtnDelete_Click;
 
             formPanel.Controls.Add(CreateLabel(Strings.LabelFirstName));
             formPanel.Controls.Add(txtFirstName);
@@ -179,8 +184,12 @@ namespace Hotel.Buttons
             formPanel.Controls.Add(new Label { Text = Strings.MsgPasswordHint, Font = new Font(commonFont.FontFamily, 8), ForeColor = Color.Gray, AutoSize = true });
 
             var btnPanel = new FlowLayoutPanel { AutoSize = true };
+
+            btnPanel.Controls.Add(btnNew);
             btnPanel.Controls.Add(btnSave);
             btnPanel.Controls.Add(btnClear);
+            // btnPanel.Controls.Add(btnDelete); // Кнопка видалення схована (закоментована)
+
             formPanel.Controls.Add(btnPanel);
 
             mainLayout.Controls.Add(leftPanel, 0, 0);
@@ -233,6 +242,7 @@ namespace Hotel.Buttons
             if (dgv.SelectedRows.Count > 0)
             {
                 var row = dgv.SelectedRows[0];
+
                 editingStaffId = (int)row.Cells["IdStaff"].Value;
                 txtFirstName.Text = row.Cells["StaffFirstName"].Value?.ToString();
                 txtLastName.Text = row.Cells["StaffLastName"].Value?.ToString();
@@ -303,6 +313,29 @@ namespace Hotel.Buttons
                 }
             }
             catch (Exception ex) { MessageBox.Show($"Помилка: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+        private async void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if (editingStaffId == null) return;
+
+            if (HotelAppContext.CurrentUser != null && HotelAppContext.CurrentUser.IdStaff == editingStaffId)
+            {
+                MessageBox.Show("Ви не можете видалити власний акаунт!", "Заборонено", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("Видалити цього працівника?", "Підтвердження", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                using (var context = new HotelDbContext())
+                {
+                    var staff = await context.Staff.FindAsync(editingStaffId);
+                    if (staff != null) context.Staff.Remove(staff);
+                    await context.SaveChangesAsync();
+                }
+                ClearForm();
+                await LoadStaff();
+            }
         }
     }
 }

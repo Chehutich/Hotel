@@ -286,6 +286,15 @@ namespace Hotel.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на + Новий.
+        /// </summary>
+        internal static string Button_New {
+            get {
+                return ResourceManager.GetString("Button_New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Розрахувати.
         /// </summary>
         internal static string ButtonCalculate {
@@ -1227,6 +1236,42 @@ namespace Hotel.Localization {
         internal static string Sort_Booking_ID {
             get {
                 return ResourceManager.GetString("Sort_Booking_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За статусом (Скасовані спочатку).
+        /// </summary>
+        internal static string Sort_Booking_Status_Cancelled {
+            get {
+                return ResourceManager.GetString("Sort_Booking_Status_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За статусом (Завершені спочатку).
+        /// </summary>
+        internal static string Sort_Booking_Status_Completed {
+            get {
+                return ResourceManager.GetString("Sort_Booking_Status_Completed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За статусом (Підтверджені спочатку).
+        /// </summary>
+        internal static string Sort_Booking_Status_Confirmed {
+            get {
+                return ResourceManager.GetString("Sort_Booking_Status_Confirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на За статусом (Проживають спочатку).
+        /// </summary>
+        internal static string Sort_Booking_Status_Living {
+            get {
+                return ResourceManager.GetString("Sort_Booking_Status_Living", resourceCulture);
             }
         }
         
